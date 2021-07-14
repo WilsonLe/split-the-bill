@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { firebase } from "./firebaseConfig";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-import Panel from "./Components/Panel";
+import Auth from "./Components/Auth";
+import Menu from "./Components/Menu";
+import NotFound from "./Components/NotFound";
 
 const App = () => {
-  const trigger_create_event = async () => {
-    const create_event = firebase.functions().httpsCallable("create_event");
-    const res = await create_event({ hello: "world" });
-    alert(res.data);
-  };
-  return (
-    <>
-      <Panel>
-        <h1>Split the bill</h1>
-        <button onClick={trigger_create_event}>create event</button>
-      </Panel>
-    </>
-  );
+  const [page, setPage] = useState("auth");
+  const [user] = useAuthState(firebase.auth());
+
+  if (page === "auth")
+    return (
+      <>
+        <h1>Sign in to start using the app!</h1>
+        <Auth user={user} setPage={setPage} />
+      </>
+    );
+  else if (page === "actions")
+    return <> {user ? <Menu user={user} /> : null}</>;
+  else return NotFound;
 };
 
 export default App;

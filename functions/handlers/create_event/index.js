@@ -1,6 +1,6 @@
 const create_event = (data, context) => {
-  console.log(data);
-  return "DONE";
+  
+  return JSON.stringify(data);
 };
 
 module.exports = create_event;
