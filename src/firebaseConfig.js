@@ -20,7 +20,7 @@ firebase.initializeApp({
   measurementId: "G-ZKVXW3YGHB",
 });
 
-if (import.meta.env.MODE == "development") {
+if (process.env.NODE_ENV === "development") {
   firebase.functions().useEmulator("localhost", 5001);
 }
 
