@@ -1,17 +1,27 @@
 const { v4: uuidv4 } = require("uuid");
 const db = require("../../firebase.config");
+const functions = require("firebase-functions");
 
 const create_event = async (data, context) => {
-  const name = `${data.name} (${data.email})`;
+  const { uid, name, email } = data;
   const event = {
-    creator: name,
+    creator: uid,
     code: uuidv4(),
-    members: [name],
-    expenses: {},
+    members: [uid],
+    expenses: {
+      [`${name} (${email})`]: 0,
+    },
   };
-  event["members"].forEach((member) => (event["expenses"][member] = 0));
-  const res = await db.collection("events").add(event);
-  return JSON.stringify(res);
+  try {
+    const docRef = await db.collection("events").add(event);
+    const newEventRef = await docRef.get();
+    const newEvent = await newEventRef.data();
+    return newEvent;
+  } catch (error) {
+    throw new functions.https.HttpsError("internal", "INTSVE", {
+      message: error.message,
+    });
+  }
 };
 
 module.exports = create_event;

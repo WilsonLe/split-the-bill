@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { firebase } from "./firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -8,20 +10,41 @@ import Event from "./Components/Event";
 import NotFound from "./Components/NotFound";
 
 const App = () => {
-  const [page, setPage] = useState("auth");
   const [user] = useAuthState(firebase.auth());
-
-  if (page === "auth")
-    return (
-      <>
-        <h1>Sign in to start using the app!</h1>
-        <Auth user={user} setPage={setPage} />
-      </>
-    );
-  else if (page === "actions")
-    return <> {user ? <Menu user={user} setPage={setPage} /> : <NotFound />}</>;
-  else if (page === "event") return <> {user ? <Event /> : <NotFound />}</>;
-  else return NotFound;
+  const [event, setEvent] = useState({});
+  const paths = [
+    {
+      path: "/",
+      component: <Menu user={user} setEvent={setEvent} />,
+    },
+    {
+      path: "/join",
+      component: null,
+    },
+    {
+      path: "/event",
+      component: <Event event={event} />,
+    },
+    {
+      path: "/auth",
+      component: <Auth user={user} />,
+    },
+    {
+      path: "*", // Must be at last, for catching every path
+      component: <NotFound />,
+    },
+  ];
+  return (
+    <BrowserRouter>
+      <Switch>
+        {paths.map((path) => (
+          <Route key={uuidv4()} path={path.path}>
+            {path.component}
+          </Route>
+        ))}
+      </Switch>
+    </BrowserRouter>
+  );
 };
 
 export default App;

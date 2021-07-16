@@ -1,7 +1,12 @@
 import React from "react";
 
-const Event = () => {
-  return <div>HELLO FROM EVENT</div>;
+const Event = ({ event }) => {
+  return (
+    <>
+      <h1>Event</h1>
+      <div>code: {event.code}</div>
+    </>
+  );
 };
 
 export default Event;

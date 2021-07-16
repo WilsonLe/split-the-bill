@@ -2,18 +2,17 @@ import React from "react";
 
 import { firebase } from "../../firebase.config";
 
-const Auth = ({ user, setPage }) => {
+const Auth = ({ user }) => {
   const sign_in = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider);
-    setPage("actions");
   };
   const sign_out = () => {
     firebase.auth().signOut();
   };
   return (
     <div>
-      <h1>Hello from auth</h1>
+      <h1>Please authenticate to continue</h1>
       {user ? (
         <button onClick={sign_out}>Sign Out</button>
       ) : (
