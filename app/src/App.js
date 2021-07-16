@@ -4,6 +4,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import Auth from "./Components/Auth";
 import Menu from "./Components/Menu";
+import Event from "./Components/Event";
 import NotFound from "./Components/NotFound";
 
 const App = () => {
@@ -18,7 +19,8 @@ const App = () => {
       </>
     );
   else if (page === "actions")
-    return <> {user ? <Menu user={user} /> : null}</>;
+    return <> {user ? <Menu user={user} setPage={setPage} /> : <NotFound />}</>;
+  else if (page === "event") return <> {user ? <Event /> : <NotFound />}</>;
   else return NotFound;
 };
 
