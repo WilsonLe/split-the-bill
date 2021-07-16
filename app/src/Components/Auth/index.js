@@ -1,12 +1,12 @@
 import React from "react";
 
-import { firebase } from "../../firebaseConfig";
+import { firebase } from "../../firebase.config";
 
-const Auth = ({ user,setPage }) => {
+const Auth = ({ user, setPage }) => {
   const sign_in = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider);
-    setPage('actions')
+    setPage("actions");
   };
   const sign_out = () => {
     firebase.auth().signOut();
