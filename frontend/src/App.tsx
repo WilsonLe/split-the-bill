@@ -1,10 +1,15 @@
 import React from "react";
+import Login from "./Pages/Login";
 import Main from "./Pages/Main";
 
 const pages = [
   {
     path: "/",
     component: Main,
+  },
+  {
+    path: "/login",
+    component: Login,
   },
 ];
 

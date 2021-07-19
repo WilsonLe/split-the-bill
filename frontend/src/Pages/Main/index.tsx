@@ -2,10 +2,10 @@ import Reac, { FC } from "react";
 
 interface props {}
 
-const Main: FC<props> = ({}) => {
+const Main: FC<props> = (props) => {
   return (
     <>
-      <div>Main Page</div>
+      <h1>Main Page</h1>
     </>
   );
 };
