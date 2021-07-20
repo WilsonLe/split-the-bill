@@ -5,6 +5,8 @@ interface props {}
 const Event: FC<props> = (props) => {
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
+  console.log(eventCode);
+
   // check if event code exist()
   return (
     <>
