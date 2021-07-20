@@ -7,15 +7,15 @@ import Main from "./Pages/Main";
 const pages = [
   {
     path: "/",
-    component: Main,
+    component: <Main />,
   },
   {
     path: "/login",
-    component: Login,
+    component: <Login />,
   },
   {
     path: "/event",
-    component: Event,
+    component: <Event />,
   },
 ];
 
