@@ -1,9 +1,9 @@
 import React, { FC, useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
 import { firebase } from "../../../firebase.config";
-interface props {}
+interface Props {}
 
-const Login: FC<props> = (props) => {
+const Login: FC<Props> = (props) => {
   const user = useContext(UserContext);
 
   const sign_in = () => {

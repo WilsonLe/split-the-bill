@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { useLocation } from "react-router-dom";
-interface props {}
+interface Props {}
 
-const Event: FC<props> = (props) => {
+const Event: FC<Props> = (props) => {
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
   console.log(eventCode);

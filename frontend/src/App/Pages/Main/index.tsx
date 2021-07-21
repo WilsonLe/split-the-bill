@@ -1,9 +1,9 @@
 import React, { FC, useContext } from "react";
 import UserContext from "../../Contexts/UserContext";
 
-interface props {}
+interface Props {}
 
-const Main: FC<props> = (props) => {
+const Main: FC<Props> = (props) => {
   const user = useContext(UserContext);
   return (
     <>
