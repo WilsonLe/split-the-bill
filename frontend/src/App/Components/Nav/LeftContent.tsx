@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 interface Props {}
 
-const LeftContent: FC<Props> = (props) => {
-  return <div className="flex">{props.children}</div>;
+const LeftContent: FC<Props> = ({ children }) => {
+  return <div className="flex">{children}</div>;
 };
 export default LeftContent;

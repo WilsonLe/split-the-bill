@@ -1,7 +1,7 @@
-import React, { FC, Fragment, useContext } from "react";
+import React, { FC, Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
-import UserContext from "../../Contexts/UserContext";
+import UserPic from "./UserPic";
 
 interface Props {
   open: Boolean;
@@ -12,22 +12,12 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Dropdown: FC<Props> = ({ userNavigation }) => {
-  const user = useContext(UserContext);
+const UserNavigation: FC<Props> = ({ userNavigation }) => {
   return (
     <Menu as="div" className="ml-3 relative">
       {({ open }) => (
         <>
-          <div>
-            <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-              <span className="sr-only">Open user menu</span>
-              <img
-                className="h-8 w-8 rounded-full"
-                src={user?.photoURL || undefined}
-                alt=""
-              />
-            </Menu.Button>
-          </div>
+          <UserPic />
           <Transition
             show={open}
             as={Fragment}
@@ -64,4 +54,4 @@ const Dropdown: FC<Props> = ({ userNavigation }) => {
     </Menu>
   );
 };
-export default Dropdown;
+export default UserNavigation;
