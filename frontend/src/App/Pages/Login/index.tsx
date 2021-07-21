@@ -1,9 +1,10 @@
 import React, { FC, useContext } from "react";
+import { Redirect } from "react-router-dom";
 import UserContext from "../../Contexts/UserContext";
 import { firebase } from "../../../firebase.config";
 interface Props {}
 
-const Login: FC<Props> = (props) => {
+const Login: FC<Props> = () => {
   const user = useContext(UserContext);
 
   const sign_in = () => {
@@ -11,18 +12,10 @@ const Login: FC<Props> = (props) => {
     firebase.auth().signInWithPopup(provider);
   };
 
-  const sign_out = () => {
-    firebase.auth().signOut();
-  };
-
   return (
     <>
       <h1>Login Page</h1>
-      {user ? (
-        <button onClick={sign_out}>Sign Out</button>
-      ) : (
-        <button onClick={sign_in}>Sign In</button>
-      )}
+      {user ? <Redirect to="/" /> : <button onClick={sign_in}>Sign In</button>}
     </>
   );
 };

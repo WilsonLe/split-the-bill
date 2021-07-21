@@ -1,19 +1,23 @@
-import React, { FC } from "react";
-import { useLocation } from "react-router-dom";
+import React, { FC, useContext } from "react";
+import { Redirect, useLocation } from "react-router-dom";
+import UserContext from "../../Contexts/UserContext";
 interface Props {}
 
-const Event: FC<Props> = (props) => {
+const Event: FC<Props> = () => {
+  const user = useContext(UserContext);
+
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
-  console.log(eventCode);
 
   // check if event code exist()
-  return (
-    <>
-      <h1>Event Page</h1>
-      <p>{query.get("hi")}</p>
-    </>
-  );
+  if (user)
+    return (
+      <>
+        <h1>Event Page</h1>
+        <p>{query.get("hi")}</p>
+      </>
+    );
+  else return <Redirect to="/login" />;
 };
 
 export default Event;

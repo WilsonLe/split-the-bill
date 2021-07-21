@@ -24,4 +24,7 @@ if (process.env.NODE_ENV === "development") {
   firebase.functions().useEmulator("localhost", 5001);
 }
 
-export { firebase };
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+export { firebase, auth, db };

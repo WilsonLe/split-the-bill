@@ -1,4 +1,5 @@
-import React, { FC, Fragment } from "react";
+import React, { FC, useContext } from "react";
+import { BrowserRouter as Router, Redirect } from "react-router-dom";
 
 import Wrapper from "./Wrapper";
 import Border from "./Border";
@@ -20,6 +21,7 @@ import MobileUserNavigation from "./MobileUserNavigation";
 import MobileUserInfo from "./MobileUserInfo";
 import MobileUserPic from "./MobileUserPic";
 import MobileUserNameEmail from "./MobileUserNameEmail";
+import UserContext from "../../Contexts/UserContext";
 
 interface Props {}
 
@@ -37,6 +39,7 @@ const userNavigation: any[] = [
 ];
 
 const Nav: FC<Props> = () => {
+  const user = useContext(UserContext);
   return (
     <>
       <Wrapper>
