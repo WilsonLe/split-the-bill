@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 interface Props {
-  open: Boolean;
+  open: boolean;
 }
 
 const MobileMenuButton: FC<Props> = ({ open }) => {

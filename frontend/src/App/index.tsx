@@ -11,6 +11,7 @@ import UserContext from "./Contexts/UserContext";
 import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
+import Popup from "./Components/Popup";
 
 const pages = [
   {
@@ -41,6 +42,7 @@ const App: FC = () => {
         <ThemeContext.Provider value={theme}>
           <Router>
             <Nav />
+            {/* <Popup /> */}
             <Switch>
               {pages.map((page) => (
                 <Route

@@ -1,5 +1,4 @@
 import React, { FC, useContext } from "react";
-import { BrowserRouter as Router, Redirect } from "react-router-dom";
 
 import Wrapper from "./Wrapper";
 import Border from "./Border";
@@ -43,7 +42,7 @@ const Nav: FC<Props> = () => {
   return (
     <>
       <Wrapper>
-        {({ open }: { open: Boolean }) => (
+        {({ open }: { open: boolean }) => (
           <>
             <Border>
               <Content>
