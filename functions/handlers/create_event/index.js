@@ -3,11 +3,12 @@ const db = require("../../firebase.config");
 const functions = require("firebase-functions");
 
 const create_event = async (data, context) => {
-  const { uid, name, email } = data;
+  const { uid, name, email, eventName } = data;
   const event = {
     creator: uid,
     code: uuidv4(),
     members: [uid],
+    name: eventName,
     expenses: {
       [`${name} (${email})`]: 0,
     },
