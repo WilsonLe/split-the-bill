@@ -22,7 +22,10 @@ const NewJobPrompt: FC<Props> = ({
   const createEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (error !== "") return;
-
+    if (eventName === "") {
+      setError("Event name cannot be empty");
+      return;
+    }
     const create_event = firebase.functions().httpsCallable("create_event");
     try {
       const res = await create_event({
