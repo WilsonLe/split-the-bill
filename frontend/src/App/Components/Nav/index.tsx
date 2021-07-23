@@ -8,7 +8,7 @@ import RightContent from "./RightContent";
 import MobileMenuButton from "./MobileMenuButton";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
-import NewJob from "./NewJob";
+import NewEvent from "./NewEvent";
 import Profile from "./Profile";
 import Bell from "./Bell";
 import UserNavigation from "./UserNavigation";
@@ -39,6 +39,8 @@ const userNavigation: any[] = [
 
 const Nav: FC<Props> = () => {
   const user = useContext(UserContext);
+  console.log(user);
+
   return (
     <>
       <Wrapper>
@@ -52,7 +54,7 @@ const Nav: FC<Props> = () => {
                   <Navigation navigation={navigation} />
                 </LeftContent>
                 <RightContent>
-                  <NewJob />
+                  <NewEvent />
                   <Profile>
                     <Bell />
                     <UserNavigation

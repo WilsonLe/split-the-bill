@@ -27,7 +27,7 @@ const Main: FC<Props> = () => {
         });
       return () => unsubscribe();
     }
-  }, []);
+  }, [user]);
 
   return (
     <>

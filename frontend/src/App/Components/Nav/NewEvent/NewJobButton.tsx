@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { PlusIcon } from "@heroicons/react/solid";
-import { Menu } from "@headlessui/react";
 
 interface Props {
   open: boolean;

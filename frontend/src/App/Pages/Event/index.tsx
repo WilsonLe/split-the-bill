@@ -8,6 +8,7 @@ const Event: FC<Props> = () => {
 
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
+  console.log(eventCode);
 
   // check if event code exist()
   if (user)

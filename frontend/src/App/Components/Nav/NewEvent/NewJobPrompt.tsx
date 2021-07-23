@@ -1,13 +1,19 @@
 import React, { FC, useContext, useState } from "react";
-import { db, firebase } from "../../../../firebase.config";
+import { firebase } from "../../../../firebase.config";
+import { NewEventData } from "./interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEventLink: React.Dispatch<React.SetStateAction<boolean>>;
+  setNewEventData: React.Dispatch<React.SetStateAction<NewEventData>>;
 }
 
-const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink }) => {
+const NewJobPrompt: FC<Props> = ({
+  setOpen,
+  setShowEventLink,
+  setNewEventData,
+}) => {
   const [eventName, setEventName] = useState("");
   const [error, setError] = useState("");
 
@@ -15,7 +21,7 @@ const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink }) => {
 
   const createEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (error != "") return;
+    if (error !== "") return;
 
     const create_event = firebase.functions().httpsCallable("create_event");
     try {
@@ -26,8 +32,7 @@ const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink }) => {
         eventName,
       });
       const newEvent = res.data;
-      console.log(newEvent);
-
+      setNewEventData(newEvent);
       setShowEventLink(true);
     } catch (error) {
       alert(error.toString());
@@ -36,7 +41,7 @@ const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink }) => {
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value == "") setError("Event name cannot be empty");
+    if (e.target.value === "") setError("Event name cannot be empty");
     else setError("");
     setEventName(e.target.value);
   };
@@ -64,7 +69,7 @@ const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink }) => {
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
               placeholder="Event name"
             />
-            {error != "" && (
+            {error !== "" && (
               <span className="p-2 text-red-500 text-xs">{error}</span>
             )}
           </div>
