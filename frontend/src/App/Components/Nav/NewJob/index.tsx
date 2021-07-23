@@ -1,6 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { FC, Fragment, useRef, useState } from "react";
 import useOnClickOutside from "../../../../utils/useOnClickOutside";
+import Popup from "../../Popup";
 
 import NewJobButton from "./NewJobButton";
 import NewJobPrompt from "./NewJobPrompt";
@@ -9,8 +10,10 @@ interface Props {}
 
 const NewJob: FC<Props> = () => {
   const [open, setOpen] = useState(false);
+  const [showEventLink, setShowEventLink] = useState(false);
   const NewJobRef = useRef(null);
   useOnClickOutside(NewJobRef, () => setOpen(false));
+
   return (
     <>
       <div className="relative" ref={NewJobRef}>
@@ -26,9 +29,24 @@ const NewJob: FC<Props> = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          {open && <NewJobPrompt setOpen={setOpen} />}
+          {open && (
+            <NewJobPrompt
+              setOpen={setOpen}
+              setShowEventLink={setShowEventLink}
+            />
+          )}
         </Transition>
       </div>
+      {showEventLink && (
+        <Popup
+          open={showEventLink}
+          setOpen={}
+          title={}
+          message={}
+          button={}
+          buttonCallback={}
+        />
+      )}
     </>
   );
 };

@@ -2,11 +2,23 @@ import React, { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 
-interface Props {}
+interface Props {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
+  message: string;
+  button: string;
+  buttonCallback: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}
 
-const Popup: FC<Props> = () => {
-  const [open, setOpen] = useState(true);
-
+const Popup: FC<Props> = ({
+  open,
+  setOpen,
+  title,
+  message,
+  button,
+  buttonCallback,
+}) => {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -58,13 +70,10 @@ const Popup: FC<Props> = () => {
                     as="h3"
                     className="text-lg leading-6 font-medium text-gray-900"
                   >
-                    Payment successful
+                    {title}
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Consequatur amet labore.
-                    </p>
+                    <p className="text-sm text-gray-500">{message}</p>
                   </div>
                 </div>
               </div>
@@ -72,9 +81,9 @@ const Popup: FC<Props> = () => {
                 <button
                   type="button"
                   className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-                  onClick={() => setOpen(false)}
+                  onClick={buttonCallback}
                 >
-                  Go back to dashboard
+                  {button}
                 </button>
               </div>
             </div>
