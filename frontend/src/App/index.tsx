@@ -41,7 +41,6 @@ const App: FC = () => {
         <ThemeContext.Provider value={theme}>
           <Router>
             <Nav />
-            {/* <Popup /> */}
             <Switch>
               {pages.map((page) => (
                 <Route

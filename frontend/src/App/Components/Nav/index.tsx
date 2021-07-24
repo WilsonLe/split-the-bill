@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
 
 import Wrapper from "./Wrapper";
-import Border from "./Border";
+
 import Content from "./Content";
 import LeftContent from "./LeftContent";
 import RightContent from "./RightContent";
@@ -21,6 +21,7 @@ import MobileUserInfo from "./MobileUserInfo";
 import MobileUserPic from "./MobileUserPic";
 import MobileUserNameEmail from "./MobileUserNameEmail";
 import UserContext from "../../Contexts/UserContext";
+import Border from "../Border";
 
 interface Props {}
 
