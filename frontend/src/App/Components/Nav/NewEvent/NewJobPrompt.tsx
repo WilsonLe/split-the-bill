@@ -29,10 +29,15 @@ const NewJobPrompt: FC<Props> = ({
     const create_event = firebase.functions().httpsCallable("create_event");
     try {
       const res = await create_event({
-        user,
+        // do not pass user props, maybe it's in context.
+        // will cause maximum stack call exceed
+        uid: user?.uid,
+        photoURL: user?.photoURL,
+        displayName: user?.displayName,
+        email: user?.email,
         eventName,
       });
-      const newEvent = res.data;
+      const newEvent = res.data as Event;
       setNewEventData(newEvent);
       setShowEventLink(true);
     } catch (error) {

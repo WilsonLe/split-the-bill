@@ -1,3 +1,5 @@
+import { firebase } from "../firebase.config";
+
 interface Event {
   name: string;
   code: string;
@@ -5,6 +7,7 @@ interface Event {
     [key: string]: number;
   };
   members: string[];
+  createdAt: firebase.firestore.Timestamp;
   creator: {
     uid: string;
     photoURL: string;

@@ -19,6 +19,8 @@ const people = [
 ];
 
 const EventList: FC<Props> = ({ eventList }) => {
+  console.log(eventList);
+
   return (
     <div className="flex flex-col">
       <div className="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -29,7 +31,7 @@ const EventList: FC<Props> = ({ eventList }) => {
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell"
+                    className="px-6 py-3 w-1/3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell"
                   >
                     Creator
                   </th>
@@ -41,11 +43,11 @@ const EventList: FC<Props> = ({ eventList }) => {
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 w-36 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Time created
                   </th>
-                  <th scope="col" className="relative px-6 py-3">
+                  <th scope="col" className="relative px-6 py-3 w-10">
                     <span className="sr-only">Edit</span>
                   </th>
                 </tr>
@@ -53,13 +55,13 @@ const EventList: FC<Props> = ({ eventList }) => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {eventList.map((event) => (
                   <tr key={event.creator.email}>
-                    <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <td className="px-6 py-4 w-1/3 whitespace-nowrap hidden md:table-cell">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <img
                             className="h-10 w-10 rounded-full"
                             src={event.creator.photoURL}
-                            alt=""
+                            alt={`Profile picture of ${event.creator.displayName}`}
                           />
                         </div>
                         <div className="ml-4">
@@ -72,21 +74,25 @@ const EventList: FC<Props> = ({ eventList }) => {
                         </div>
                       </div>
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-md text-gray-900">{event.name}</div>
+                    </td>
+                    <td className="px-6 py-4 w-36 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {person.title}
+                        {event.createdAt.toDate().toLocaleDateString()}
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {person.department}
+                      <div className="text-sm text-gray-900">
+                        {event.createdAt.toDate().toLocaleTimeString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        Active
+                        round green status bubble
                       </span>
                     </td> */}
 
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 w-10 whitespace-nowrap text-right text-sm font-medium">
                       <a
                         href="#"
                         className="text-indigo-600 hover:text-indigo-900"

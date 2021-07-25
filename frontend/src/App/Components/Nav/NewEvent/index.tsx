@@ -81,10 +81,14 @@ const NewEvent: FC<Props> = () => {
                 <p className="text-sm text-gray-500 text-left p-4 mb-4 border border-gray-300 shadow-sm rounded-sm">
                   {`${window.location}event/${newEventData?.code}`}
                 </p>
-                <ButtonWhite onClick={copyEventCodeHandler}>Copy</ButtonWhite>
-                {copyEventCode && (
-                  <span className="block text-xs text-green-500">copied</span>
-                )}
+                <div>
+                  <ButtonWhite onClick={copyEventCodeHandler}>Copy</ButtonWhite>
+                  {copyEventCode && (
+                    <span className="absolute text-xs text-green-500">
+                      copied
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>

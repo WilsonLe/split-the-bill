@@ -1,15 +1,15 @@
 const { v4: uuidv4 } = require("uuid");
-const db = require("../../firebase.config");
+const { db, admin } = require("../../firebase.config");
 const functions = require("firebase-functions");
 
 const create_event = async (data, context) => {
-  const { user, eventName } = data;
-  const { uid, photoURL, displayName, email } = user;
+  const { uid, photoURL, displayName, email, eventName } = data;
   const event = {
     creator: { uid, photoURL, displayName, email },
     code: uuidv4(),
     members: [uid],
     name: eventName,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
     expenses: {
       [`${displayName} (${email})`]: 0,
     },
