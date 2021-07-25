@@ -15,7 +15,7 @@ const Event: FC<Props> = () => {
     return (
       <>
         <h1>Event Page</h1>
-        <p>{query.get("hi")}</p>
+        <p>{query.get("code")}</p>
       </>
     );
   else return <Redirect to="/login" />;

@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { Link } from "react-router-dom";
 import { firebase } from "../../../../firebase.config";
 import { Event } from "../../../interfaces";
 
@@ -19,8 +20,6 @@ const people = [
 ];
 
 const EventList: FC<Props> = ({ eventList }) => {
-  console.log(eventList);
-
   return (
     <div className="flex flex-col">
       <div className="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -93,12 +92,12 @@ const EventList: FC<Props> = ({ eventList }) => {
                     </td> */}
 
                     <td className="px-6 py-4 w-10 whitespace-nowrap text-right text-sm font-medium">
-                      <a
-                        href="#"
+                      <Link
+                        to={`/event?code=${event.code}`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         View
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 ))}
