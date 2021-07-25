@@ -1,12 +1,12 @@
 import React, { FC, useContext, useState } from "react";
 import { firebase } from "../../../../firebase.config";
-import { NewEventData } from "./interfaces";
+import { Event } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEventLink: React.Dispatch<React.SetStateAction<boolean>>;
-  setNewEventData: React.Dispatch<React.SetStateAction<NewEventData>>;
+  setNewEventData: React.Dispatch<React.SetStateAction<Event>>;
 }
 
 const NewJobPrompt: FC<Props> = ({
@@ -29,9 +29,7 @@ const NewJobPrompt: FC<Props> = ({
     const create_event = firebase.functions().httpsCallable("create_event");
     try {
       const res = await create_event({
-        uid: user?.uid,
-        name: user?.displayName,
-        email: user?.email,
+        user,
         eventName,
       });
       const newEvent = res.data;

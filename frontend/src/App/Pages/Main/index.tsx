@@ -7,25 +7,25 @@ import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
 import EventList from "./EventList";
 
+import { Event } from "../../interfaces";
+
 interface Props {}
 
 const Main: FC<Props> = () => {
   const user = useContext(UserContext);
-  const [creatorEvents, setCreatorEvents] = useState<
-    firebase.firestore.DocumentData[]
-  >([]);
+  const [eventList, setEventList] = useState<Event[]>([]);
 
   useEffect(() => {
     if (user) {
       const unsubscribe = db
         .collection("events")
-        .where("creator", "==", user.uid)
+        .where("members", "array-contains", user.uid)
         .onSnapshot((querySnapshot) => {
-          const creatorEvents: firebase.firestore.DocumentData[] = [];
+          const creatorEvents: Event[] = [];
           querySnapshot.forEach((doc) => {
-            creatorEvents.push(doc.data());
+            creatorEvents.push(doc.data() as Event);
           });
-          setCreatorEvents(creatorEvents);
+          setEventList(creatorEvents);
         });
       return () => unsubscribe();
     }
@@ -41,12 +41,8 @@ const Main: FC<Props> = () => {
           </h3>
         </div>
 
-        <EventList />
+        <EventList eventList={eventList} />
       </Border>
-
-      {/* {creatorEvents.map((event: firebase.firestore.DocumentData) => (
-        <div key={event.code}>{event.name}</div>
-      ))} */}
     </>
   );
 };

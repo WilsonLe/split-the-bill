@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 import useOnClickOutside from "../../../../utils/useOnClickOutside";
 
-import { dummyNewEventData } from "./interfaces";
+import { dummyEvent } from "../../../interfaces";
 
 import Popup from "../../Popup";
 import NewJobButton from "./NewJobButton";
@@ -15,7 +15,7 @@ interface Props {}
 const NewEvent: FC<Props> = () => {
   const [open, setOpen] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
-  const [newEventData, setNewEventData] = useState(dummyNewEventData);
+  const [newEventData, setNewEventData] = useState(dummyEvent);
   const [copyEventCode, setCopyEventCode] = useState(false);
 
   const NewJobRef = useRef(null);
