@@ -1,6 +1,15 @@
 import { firebase } from "../firebase.config";
 
+interface UserInfo {
+  uid: string;
+  photoURL: string;
+  displayName: string;
+  email: string;
+}
+interface UserInfos extends Array<UserInfo> {}
+
 interface Event {
+  id?: string;
   name: string;
   code: string;
   expenses: {
@@ -8,14 +17,11 @@ interface Event {
   };
   members: string[];
   createdAt: firebase.firestore.Timestamp;
-  creator: {
-    uid: string;
-    photoURL: string;
-    displayName: string;
-    email: string;
-  };
+  creator: UserInfo;
 }
-let dummyEvent: Event;
 
-export type { Event };
-export { dummyEvent };
+let dummyUserInfo: UserInfo;
+let dummyUserInfos: UserInfos;
+let dummyEvent: Event;
+export type { Event, UserInfo, UserInfos };
+export { dummyEvent, dummyUserInfo, dummyUserInfos };

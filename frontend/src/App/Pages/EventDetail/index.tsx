@@ -1,18 +1,25 @@
+import { UserInfo } from "os";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
+import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
-import { dummyEvent, Event } from "../../interfaces";
+import { dummyEvent, dummyUserInfos, Event, UserInfos } from "../../interfaces";
+import JoinEvent from "./JoinEvent";
+
 interface Props {}
 
 const EventDetail: FC<Props> = () => {
   const user = useContext(UserContext);
-  const [currentEvent, setCurrentEvent] = useState(dummyEvent);
+  const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
+  const [members, setMember] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
+  const [isMember, setIsMember] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
-  // check if event code exist()
+
   useEffect(() => {
+    // check if event code exist(), if it does, setState(currentEvent)
     (async () => {
       const currentEventSnapshot = await db
         .collection("events")
@@ -20,18 +27,30 @@ const EventDetail: FC<Props> = () => {
         .get();
       if (currentEventSnapshot.empty) setIsValidCode(false);
       currentEventSnapshot.forEach((e) => {
-        setCurrentEvent(e.data() as Event);
+        setCurrentEvent({ id: e.id, ...(e.data() as Event) } as Event);
       });
     })();
   }, [eventCode]);
 
+  useEffect(() => {
+    const detailMembers = currentEvent.members.map(async (memberUID) => {
+      db.collection("events");
+    });
+    console.log(currentEvent?.id);
+  }, [currentEvent]);
   return (
     <>
       {!user && <Redirect to="/login" />}
       {!isValidCode && <Redirect to="/notfound" />}
-      <h1>Event Page</h1>
-      <p>{currentEvent?.code}</p>
-      <p>{currentEvent?.name}</p>
+      {!isMember && <JoinEvent />}
+      <Border>
+        <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
+          <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
+            {currentEvent?.name}
+          </h3>
+          <span className="w-20">event info</span>
+        </div>
+      </Border>
     </>
   );
 };
