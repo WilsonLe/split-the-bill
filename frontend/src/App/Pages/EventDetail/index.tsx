@@ -33,11 +33,9 @@ const EventDetail: FC<Props> = () => {
   }, [eventCode]);
 
   useEffect(() => {
-    const detailMembers = currentEvent.members.map(async (memberUID) => {
-      db.collection("events");
-    });
     console.log(currentEvent?.id);
   }, [currentEvent]);
+
   return (
     <>
       {!user && <Redirect to="/login" />}

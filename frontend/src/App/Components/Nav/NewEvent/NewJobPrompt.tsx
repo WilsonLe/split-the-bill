@@ -30,7 +30,6 @@ const NewJobPrompt: FC<Props> = ({
 
     if (user) {
       const newEvent: Event = {
-        
         name: eventName,
         code: uuidv4(),
         expenses: {
