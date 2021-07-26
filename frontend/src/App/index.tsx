@@ -4,13 +4,14 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { firebase } from "../firebase.config";
 
-import Event from "./Pages/Event";
+import EventDetail from "./Pages/EventDetail";
 import Login from "./Pages/Login";
 import Main from "./Pages/Main";
 import UserContext from "./Contexts/UserContext";
 import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
+import NotFound from "./Pages/NotFound";
 
 const pages = [
   {
@@ -27,7 +28,11 @@ const pages = [
   },
   {
     path: "/event",
-    component: <Event />,
+    component: <EventDetail />,
+  },
+  {
+    path: "/notfound",
+    component: <NotFound />,
   },
 ];
 

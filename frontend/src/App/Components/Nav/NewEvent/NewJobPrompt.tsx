@@ -1,5 +1,6 @@
 import React, { FC, useContext, useState } from "react";
-import { firebase } from "../../../../firebase.config";
+import { v4 as uuidv4 } from "uuid";
+import { db, firebase } from "../../../../firebase.config";
 import { Event } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
@@ -26,22 +27,30 @@ const NewJobPrompt: FC<Props> = ({
       setError("Event name cannot be empty");
       return;
     }
-    const create_event = firebase.functions().httpsCallable("create_event");
-    try {
-      const res = await create_event({
-        // do not pass user props, maybe it's in context.
-        // will cause maximum stack call exceed
-        uid: user?.uid,
-        photoURL: user?.photoURL,
-        displayName: user?.displayName,
-        email: user?.email,
-        eventName,
-      });
-      const newEvent = res.data as Event;
-      setNewEventData(newEvent);
-      setShowEventLink(true);
-    } catch (error) {
-      alert(error.toString());
+
+    if (user) {
+      const newEvent: Event = {
+        name: eventName,
+        code: uuidv4(),
+        expenses: {
+          [`${user.displayName} (${user.email})`]: 0,
+        },
+        members: [user.uid],
+        createdAt: firebase.firestore.Timestamp.now(),
+        creator: {
+          uid: user.uid,
+          photoURL: user.photoURL as string,
+          displayName: user.displayName as string,
+          email: user.email as string,
+        },
+      };
+      try {
+        await db.collection("events").add(newEvent);
+        setNewEventData(newEvent);
+        setShowEventLink(true);
+      } catch (error) {
+        alert(error.toString());
+      }
     }
     setOpen(false);
   };

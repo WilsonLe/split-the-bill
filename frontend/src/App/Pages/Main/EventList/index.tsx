@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { firebase } from "../../../../firebase.config";
 import { Event } from "../../../interfaces";
@@ -6,18 +7,6 @@ import { Event } from "../../../interfaces";
 interface Props {
   eventList: Event[];
 }
-
-const people = [
-  {
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    department: "Optimization",
-
-    email: "jane.cooper@example.com",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-];
 
 const EventList: FC<Props> = ({ eventList }) => {
   return (
@@ -53,7 +42,7 @@ const EventList: FC<Props> = ({ eventList }) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {eventList.map((event) => (
-                  <tr key={event.creator.email}>
+                  <tr key={uuidv4()}>
                     <td className="px-6 py-4 w-1/3 whitespace-nowrap hidden md:table-cell">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
