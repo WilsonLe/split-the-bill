@@ -1,7 +1,6 @@
-import { UserInfo } from "os";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
-import { db } from "../../../firebase.config";
+import { db, firebase } from "../../../firebase.config";
 import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
 import { dummyEvent, dummyUserInfos, Event, UserInfos } from "../../interfaces";
@@ -31,10 +30,6 @@ const EventDetail: FC<Props> = () => {
       });
     })();
   }, [eventCode]);
-
-  useEffect(() => {
-    console.log(currentEvent?.id);
-  }, [currentEvent]);
 
   return (
     <>

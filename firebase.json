@@ -1,7 +1,11 @@
 {
   "hosting": {
     "public": "frontend/build",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -11,7 +15,11 @@
     "cleanUrls": true
   },
   "functions": {
-    "predeploy": [""]
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ],
+    "source": "functions"
   },
   "emulators": {
     "functions": {

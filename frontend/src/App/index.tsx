@@ -1,8 +1,8 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { firebase } from "../firebase.config";
+import { db, firebase } from "../firebase.config";
 
 import EventDetail from "./Pages/EventDetail";
 import Login from "./Pages/Login";
@@ -38,6 +38,21 @@ const pages = [
 
 const App: FC = () => {
   const [user] = useAuthState(firebase.auth());
+  // check if user already in db
+  useEffect(() => {
+    if (user)
+      (async () => {
+        const docRef = db.collection("user").doc(user?.uid);
+        const docSnap = await docRef.get();
+        if (!docSnap.exists) {
+          docRef.set({
+            photoURL: user.photoURL,
+            displayName: user.displayName,
+            email: user.email,
+          });
+        }
+      })();
+  }, [user]);
   const [theme, setTheme] = useState("dark");
 
   return (
