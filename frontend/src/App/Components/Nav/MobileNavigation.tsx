@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import classNames from "../../../utils/classNames";
 
 interface Props {
   navigation: {
@@ -7,11 +8,6 @@ interface Props {
     current: Boolean;
   }[];
 }
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 const MobileNavigation: FC<Props> = ({ navigation }) => {
   return (
     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">

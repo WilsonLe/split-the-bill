@@ -1,6 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
-import { db, firebase } from "../../../firebase.config";
+import { db } from "../../../firebase.config";
+
 import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
 import {
@@ -10,7 +11,9 @@ import {
   UserInfo,
   UserInfos,
 } from "../../interfaces";
+import Expense from "./Expenses";
 import JoinEvent from "./JoinEvent";
+import Members from "./Members";
 
 interface Props {}
 
@@ -25,7 +28,7 @@ const EventDetail: FC<Props> = () => {
 
   // fetch event data from eventCode
   useEffect(() => {
-    if (eventCode)
+    if (eventCode) {
       (async () => {
         const currentEventSnapshot = await db
           .collection("events")
@@ -36,7 +39,7 @@ const EventDetail: FC<Props> = () => {
           setCurrentEvent({ id: e.id, ...(e.data() as Event) } as Event);
         });
       })();
-    else setIsValidCode(false);
+    } else setIsValidCode(false);
   }, [eventCode]);
 
   // fetch users data from event data
@@ -53,15 +56,11 @@ const EventDetail: FC<Props> = () => {
             console.log(`unknown user with uid ${userRef.id}`);
           }
         }
-        console.log(tempMembers);
         setMembers(tempMembers);
       })();
     }
   }, [currentEvent]);
 
-  useEffect(() => {
-    console.log(members);
-  }, [members]);
   return (
     <>
       {!user && <Redirect to="/login" />}
@@ -74,17 +73,8 @@ const EventDetail: FC<Props> = () => {
           </h3>
           <span className="w-20">event info</span>
         </div>
-        <div>
-          <h1>members</h1>
-          {members &&
-            members.map((member) => (
-              <div key={member.uid}>
-                <p>{member.displayName}</p>
-                <p>{member.email}</p>
-                <p>{member.photoURL}</p>
-              </div>
-            ))}
-        </div>
+        <Members members={members} />
+        <Expense members={members} expenses={currentEvent?.expenses} />
       </Border>
     </>
   );

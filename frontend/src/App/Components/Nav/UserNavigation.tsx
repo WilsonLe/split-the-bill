@@ -2,14 +2,11 @@ import React, { FC, Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
 import UserPic from "./UserPic";
+import classNames from "../../../utils/classNames";
 
 interface Props {
   open: Boolean;
   userNavigation: { name: string; href: string }[];
-}
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
 }
 
 const UserNavigation: FC<Props> = ({ userNavigation }) => {

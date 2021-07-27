@@ -12,16 +12,21 @@ interface Event {
   id?: string;
   name: string;
   code: string;
-  expenses: {
-    [key: string]: number;
-  };
+  expenses: Expenses;
   members: string[];
   createdAt: firebase.firestore.Timestamp;
   creator: UserInfo;
 }
 
+interface Expense {
+  [key: string]: number | firebase.firestore.Timestamp;
+}
+
+interface Expenses extends Array<Expense> {}
+
 let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
-export type { Event, UserInfo, UserInfos };
-export { dummyEvent, dummyUserInfo, dummyUserInfos };
+let dummyExpense: Expense;
+export type { Event, UserInfo, UserInfos, Expense, Expenses };
+export { dummyEvent, dummyUserInfo, dummyUserInfos, dummyExpense };

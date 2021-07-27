@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
-import { firebase } from "../../../../firebase.config";
 import { Event } from "../../../interfaces";
 
 interface Props {
@@ -49,7 +48,7 @@ const EventList: FC<Props> = ({ eventList }) => {
                           <img
                             className="h-10 w-10 rounded-full"
                             src={event.creator.photoURL}
-                            alt={`Profile picture of ${event.creator.displayName}`}
+                            alt={`Profile of ${event.creator.displayName}`}
                           />
                         </div>
                         <div className="ml-4">

@@ -1,7 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
-import { db, firebase } from "../../../firebase.config";
+import { db } from "../../../firebase.config";
 import Border from "../../Components/Border";
 
 import UserContext from "../../Contexts/UserContext";
