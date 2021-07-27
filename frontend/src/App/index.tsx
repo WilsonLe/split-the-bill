@@ -42,10 +42,10 @@ const App: FC = () => {
   useEffect(() => {
     if (user)
       (async () => {
-        const docRef = db.collection("user").doc(user?.uid);
-        const docSnap = await docRef.get();
-        if (!docSnap.exists) {
-          docRef.set({
+        const userRef = db.collection("user").doc(user?.uid);
+        const userSnap = await userRef.get();
+        if (!userSnap.exists) {
+          userRef.set({
             photoURL: user.photoURL,
             displayName: user.displayName,
             email: user.email,

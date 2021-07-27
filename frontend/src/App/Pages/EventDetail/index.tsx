@@ -3,7 +3,13 @@ import { Redirect, useLocation } from "react-router-dom";
 import { db, firebase } from "../../../firebase.config";
 import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
-import { dummyEvent, dummyUserInfos, Event, UserInfos } from "../../interfaces";
+import {
+  dummyEvent,
+  dummyUserInfos,
+  Event,
+  UserInfo,
+  UserInfos,
+} from "../../interfaces";
 import JoinEvent from "./JoinEvent";
 
 interface Props {}
@@ -11,26 +17,51 @@ interface Props {}
 const EventDetail: FC<Props> = () => {
   const user = useContext(UserContext);
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
-  const [members, setMember] = useState<UserInfos>(dummyUserInfos);
+  const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isMember, setIsMember] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
+  // fetch event data from eventCode
   useEffect(() => {
-    // check if event code exist(), if it does, setState(currentEvent)
-    (async () => {
-      const currentEventSnapshot = await db
-        .collection("events")
-        .where("code", "==", eventCode)
-        .get();
-      if (currentEventSnapshot.empty) setIsValidCode(false);
-      currentEventSnapshot.forEach((e) => {
-        setCurrentEvent({ id: e.id, ...(e.data() as Event) } as Event);
-      });
-    })();
+    if (eventCode)
+      (async () => {
+        const currentEventSnapshot = await db
+          .collection("events")
+          .where("code", "==", eventCode)
+          .get();
+        if (currentEventSnapshot.empty) setIsValidCode(false);
+        currentEventSnapshot.forEach((e) => {
+          setCurrentEvent({ id: e.id, ...(e.data() as Event) } as Event);
+        });
+      })();
+    else setIsValidCode(false);
   }, [eventCode]);
 
+  // fetch users data from event data
+  useEffect(() => {
+    if (currentEvent) {
+      (async () => {
+        const tempMembers: UserInfos = [];
+        for (let i = 0; i < currentEvent.members.length; i++) {
+          const userRef = db.collection("users").doc(currentEvent.members[i]);
+          const userSnap = await userRef.get();
+          if (userSnap.exists) {
+            tempMembers.push(userSnap.data() as UserInfo);
+          } else {
+            console.log(`unknown user with uid ${userRef.id}`);
+          }
+        }
+        console.log(tempMembers);
+        setMembers(tempMembers);
+      })();
+    }
+  }, [currentEvent]);
+
+  useEffect(() => {
+    console.log(members);
+  }, [members]);
   return (
     <>
       {!user && <Redirect to="/login" />}
@@ -42,6 +73,17 @@ const EventDetail: FC<Props> = () => {
             {currentEvent?.name}
           </h3>
           <span className="w-20">event info</span>
+        </div>
+        <div>
+          <h1>members</h1>
+          {members &&
+            members.map((member) => (
+              <div key={member.uid}>
+                <p>{member.displayName}</p>
+                <p>{member.email}</p>
+                <p>{member.photoURL}</p>
+              </div>
+            ))}
         </div>
       </Border>
     </>
