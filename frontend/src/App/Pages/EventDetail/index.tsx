@@ -44,23 +44,23 @@ const EventDetail: FC<Props> = () => {
   }, [eventCode]);
 
   // fetch users data from event data
-  // useEffect(() => {
-  //   if (currentEvent) {
-  //     (async () => {
-  //       const tempMembers: UserInfos = [];
-  //       for (let i = 0; i < currentEvent.members.length; i++) {
-  //         const userRef = db.collection("users").doc(currentEvent.members[i]);
-  //         const userSnap = await userRef.get();
-  //         if (userSnap.exists) {
-  //           tempMembers.push(userSnap.data() as UserInfo);
-  //         } else {
-  //           console.log(`unknown user with uid ${userRef.id}`);
-  //         }
-  //       }
-  //       setMembers(tempMembers);
-  //     })();
-  //   }
-  // }, [currentEvent]);
+  useEffect(() => {
+    if (currentEvent) {
+      (async () => {
+        const tempMembers: UserInfos = [];
+        for (let i = 0; i < currentEvent.members.length; i++) {
+          const userRef = db.collection("users").doc(currentEvent.members[i]);
+          const userSnap = await userRef.get();
+          if (userSnap.exists) {
+            tempMembers.push(userSnap.data() as UserInfo);
+          } else {
+            console.log(`unknown user with uid ${userRef.id}`);
+          }
+        }
+        setMembers(tempMembers);
+      })();
+    }
+  }, [currentEvent]);
 
   return (
     <>
@@ -74,8 +74,8 @@ const EventDetail: FC<Props> = () => {
           </h3>
           <span className="w-20">event info</span>
         </div>
-        <MembersList eventId={currentEvent?.id} />
-        <ExpensesList eventId={currentEvent?.id} />
+        <MembersList members={members} />
+        <ExpensesList members={members} expenses={currentEvent?.expenses} />
       </Border>
     </>
   );

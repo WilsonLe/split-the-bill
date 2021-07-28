@@ -1,14 +1,27 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import classNames from "../../../utils/classNames";
-import { Expenses, UserInfos } from "../../interfaces";
+import { DetailExpenses, Expenses, UserInfos } from "../../interfaces";
 
 interface Props {
-  eventId: string;
+  members: UserInfos;
+  expenses: Expenses;
 }
 
-const ExpensesList: FC<Props> = ({ eventId }) => {
+const ExpensesList: FC<Props> = ({ members, expenses }) => {
+  const [detailExpense, setDetailExpense] = useState<DetailExpenses>([]);
+  useEffect(() => {
+    if (members && expenses) {
+      const tempDetailExpense = expenses.map((expense) => {
+        const user = members.find((member) => member.uid === expense.user);
+        console.log(members);
+        return { ...expense, user };
+      }) as DetailExpenses;
+      console.log(tempDetailExpense);
+      setDetailExpense(tempDetailExpense);
+    }
+  }, [members, expenses]);
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -29,14 +42,12 @@ const ExpensesList: FC<Props> = ({ eventId }) => {
             </Disclosure.Button>
 
             <Disclosure.Panel>
-              {/* {expenses &&
+              {expenses &&
                 expenses.map((expense) => (
-                  <div key={expense.}>
-                    <p>{member.displayName}</p>
-                    <p>{member.email}</p>
-                    <p>{member.photoURL}</p>
+                  <div key={expense.id}>
+                    <p>{expense.user}</p>
                   </div>
-                ))} */}
+                ))}
             </Disclosure.Panel>
           </>
         )}

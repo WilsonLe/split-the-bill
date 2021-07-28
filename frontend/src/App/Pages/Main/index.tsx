@@ -1,4 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
+import { firebase } from "../../../firebase.config";
 import { Redirect } from "react-router-dom";
 
 import { db } from "../../../firebase.config";
@@ -15,6 +16,7 @@ const Main: FC<Props> = () => {
   const user = useContext(UserContext);
   const [eventList, setEventList] = useState<Event[]>([]);
 
+  // fetch all event that has current user a member
   useEffect(() => {
     if (user) {
       const unsubscribe = db
@@ -40,7 +42,7 @@ const Main: FC<Props> = () => {
             Events
           </h3>
         </div>
-    
+
         <EventList eventList={eventList} />
       </Border>
     </>

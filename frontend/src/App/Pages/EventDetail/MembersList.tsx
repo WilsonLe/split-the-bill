@@ -1,14 +1,15 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { db } from "../../../firebase.config";
 import classNames from "../../../utils/classNames";
-import { UserInfos } from "../../interfaces";
+import { dummyUserInfos, UserInfo, UserInfos } from "../../interfaces";
 
 interface Props {
-  eventId: string;
+  members: UserInfos;
 }
 
-const MembersList: FC<Props> = ({ eventId }) => {
+const MembersList: FC<Props> = ({ members }) => {
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -29,14 +30,14 @@ const MembersList: FC<Props> = ({ eventId }) => {
             </Disclosure.Button>
 
             <Disclosure.Panel>
-              {/* {members &&
+              {members &&
                 members.map((member) => (
                   <div key={member.uid}>
                     <p>{member.displayName}</p>
                     <p>{member.email}</p>
                     <p>{member.photoURL}</p>
                   </div>
-                ))} */}
+                ))}
             </Disclosure.Panel>
           </>
         )}
