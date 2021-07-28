@@ -5,11 +5,10 @@ import classNames from "../../../utils/classNames";
 import { Expenses, UserInfos } from "../../interfaces";
 
 interface Props {
-  members: UserInfos;
-  expenses: Expenses;
+  eventId: string;
 }
 
-const ExpenseList: FC<Props> = ({ members, expenses }) => {
+const ExpensesList: FC<Props> = ({ eventId }) => {
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -29,7 +28,16 @@ const ExpenseList: FC<Props> = ({ members, expenses }) => {
               </div>
             </Disclosure.Button>
 
-            <Disclosure.Panel></Disclosure.Panel>
+            <Disclosure.Panel>
+              {/* {expenses &&
+                expenses.map((expense) => (
+                  <div key={expense.}>
+                    <p>{member.displayName}</p>
+                    <p>{member.email}</p>
+                    <p>{member.photoURL}</p>
+                  </div>
+                ))} */}
+            </Disclosure.Panel>
           </>
         )}
       </Disclosure>
@@ -37,4 +45,4 @@ const ExpenseList: FC<Props> = ({ members, expenses }) => {
   );
 };
 
-export default ExpenseList;
+export default ExpensesList;

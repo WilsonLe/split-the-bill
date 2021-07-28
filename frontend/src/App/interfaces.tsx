@@ -9,24 +9,36 @@ interface UserInfo {
 interface UserInfos extends Array<UserInfo> {}
 
 interface Event {
-  id?: string;
+  id: string;
   name: string;
   code: string;
-  expenses: Expenses;
   members: string[];
   createdAt: firebase.firestore.Timestamp;
   creator: UserInfo;
 }
 
 interface Expense {
-  [key: string]: number | firebase.firestore.Timestamp;
+  id?: string;
+  user: string;
+  amount: number;
+  spentAt: firebase.firestore.Timestamp;
 }
 
-interface Expenses extends Array<Expense> {}
+interface Expenses {
+  [key: string]: Expense;
+}
 
 let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
 let dummyExpense: Expense;
+let dummyExpenses: Expenses;
+
 export type { Event, UserInfo, UserInfos, Expense, Expenses };
-export { dummyEvent, dummyUserInfo, dummyUserInfos, dummyExpense };
+export {
+  dummyEvent,
+  dummyUserInfo,
+  dummyUserInfos,
+  dummyExpense,
+  dummyExpenses,
+};
