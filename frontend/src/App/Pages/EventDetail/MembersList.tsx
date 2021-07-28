@@ -8,7 +8,7 @@ interface Props {
   members: UserInfos;
 }
 
-const Members: FC<Props> = ({ members }) => {
+const MembersList: FC<Props> = ({ members }) => {
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -29,14 +29,24 @@ const Members: FC<Props> = ({ members }) => {
             </Disclosure.Button>
 
             <Disclosure.Panel>
-              {members &&
-                members.map((member) => (
-                  <div key={member.uid}>
-                    <p>{member.displayName}</p>
-                    <p>{member.email}</p>
-                    <p>{member.photoURL}</p>
-                  </div>
-                ))}
+              <ul className="divide-y divide-gray-200">
+                {members &&
+                  members.map((member) => (
+                    <li key={member.email} className="py-4 flex">
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={member.photoURL}
+                        alt=""
+                      />
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-900">
+                          {member.displayName}
+                        </p>
+                        <p className="text-sm text-gray-500">{member.email}</p>
+                      </div>
+                    </li>
+                  ))}
+              </ul>
             </Disclosure.Panel>
           </>
         )}
@@ -45,4 +55,4 @@ const Members: FC<Props> = ({ members }) => {
   );
 };
 
-export default Members;
+export default MembersList;

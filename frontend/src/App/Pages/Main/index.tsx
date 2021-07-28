@@ -40,7 +40,7 @@ const Main: FC<Props> = () => {
             Events
           </h3>
         </div>
-
+    
         <EventList eventList={eventList} />
       </Border>
     </>

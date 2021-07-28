@@ -11,9 +11,9 @@ import {
   UserInfo,
   UserInfos,
 } from "../../interfaces";
-import Expense from "./Expenses";
+import ExpenseList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
-import Members from "./Members";
+import MembersList from "./MembersList";
 
 interface Props {}
 
@@ -73,8 +73,8 @@ const EventDetail: FC<Props> = () => {
           </h3>
           <span className="w-20">event info</span>
         </div>
-        <Members members={members} />
-        <Expense members={members} expenses={currentEvent?.expenses} />
+        <MembersList members={members} />
+        <ExpenseList members={members} expenses={currentEvent?.expenses} />
       </Border>
     </>
   );

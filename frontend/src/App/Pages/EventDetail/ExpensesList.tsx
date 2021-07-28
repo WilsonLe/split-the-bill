@@ -9,7 +9,7 @@ interface Props {
   expenses: Expenses;
 }
 
-const Expense: FC<Props> = ({ members, expenses }) => {
+const ExpenseList: FC<Props> = ({ members, expenses }) => {
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -29,16 +29,7 @@ const Expense: FC<Props> = ({ members, expenses }) => {
               </div>
             </Disclosure.Button>
 
-            <Disclosure.Panel>
-              {members &&
-                members.map((member) => (
-                  <div key={member.uid}>
-                    <p>{member.displayName}</p>
-                    <p>{member.email}</p>
-                    <p>{member.photoURL}</p>
-                  </div>
-                ))}
-            </Disclosure.Panel>
+            <Disclosure.Panel></Disclosure.Panel>
           </>
         )}
       </Disclosure>
@@ -46,4 +37,4 @@ const Expense: FC<Props> = ({ members, expenses }) => {
   );
 };
 
-export default Expense;
+export default ExpenseList;
