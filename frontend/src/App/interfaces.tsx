@@ -22,6 +22,7 @@ interface Expense {
   id: string;
   user: string;
   amount: number;
+  description: string;
   spentAt: firebase.firestore.Timestamp;
 }
 

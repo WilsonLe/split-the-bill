@@ -74,7 +74,7 @@ const EventDetail: FC<Props> = () => {
           </h3>
           <span className="w-20">event info</span>
         </div>
-        <MembersList members={members} />
+        <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList members={members} expenses={currentEvent?.expenses} />
       </Border>
     </>

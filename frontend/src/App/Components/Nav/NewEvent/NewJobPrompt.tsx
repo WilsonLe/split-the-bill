@@ -39,6 +39,7 @@ const NewJobPrompt: FC<Props> = ({
             id: uuidv4(),
             user: user.uid,
             amount: 0,
+            description: "test description",
             spentAt: firebase.firestore.Timestamp.now(),
           } as Expense,
         ] as Expenses,
