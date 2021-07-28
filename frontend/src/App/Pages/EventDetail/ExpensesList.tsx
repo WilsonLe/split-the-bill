@@ -1,6 +1,7 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import React, { FC, useEffect, useState } from "react";
+import { AiOutlineEdit } from "react-icons/ai";
 import classNames from "../../../utils/classNames";
 import { DetailExpenses, Expenses, UserInfos } from "../../interfaces";
 
@@ -50,29 +51,29 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
                           <tr>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-3 py-3 w-1/4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
                               User
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-3 py-3 w-full text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
                               Description
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-3 py-3 w-12 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Amount
+                              Amt.
                             </th>
                             <th
                               scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                              className="px-3 py-3 w-15 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:block"
                             >
-                              Spent on
+                              Time
                             </th>
-                            <th scope="col" className="relative px-6 py-3">
+                            <th scope="col" className="relative px-6 py-3 w-5">
                               <span className="sr-only">Edit</span>
                             </th>
                           </tr>
@@ -80,53 +81,50 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
                         <tbody className="bg-white divide-y divide-gray-200">
                           {detailExpenses.map((expense) => (
                             <tr key={expense.id}>
-                              <td className="px-6 py-4 whitespace-nowrap">
+                              <td className="px-3 py-4 w-1/4 whitespace-nowrap">
                                 <div className="flex items-center">
-                                  <div className="flex-shrink-0 h-10 w-10">
+                                  <div className="flex-shrink-0 h-10 w-10 hidden sm:flex">
                                     <img
                                       className="h-10 w-10 rounded-full"
                                       src={expense.user.photoURL}
                                       alt=""
                                     />
                                   </div>
-                                  <div className="ml-4">
-                                    <div className="text-sm font-medium text-gray-900">
+                                  <div className="sm:ml-4">
+                                    <div className="text-sm font-small text-gray-900">
                                       {expense.user.displayName}
-                                    </div>
-                                    <div className="text-sm text-gray-500">
-                                      {expense.user.email}
                                     </div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
+                              <td className="px-3 py-4 w-full whitespace-nowrap">
                                 <div className="text-sm text-gray-900">
                                   {expense.description}
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
+                              <td className="px-3 py-4 w-12 whitespace-nowrap text-center">
                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                  {expense.amount}
+                                  + {expense.amount}
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div className="text-sm text-gray-900">
+                              <td className="px-3 py-4 w-15 whitespace-nowrap text-xs text-gray-900 hidden sm:block">
+                                <div>
                                   {expense.spentAt
                                     .toDate()
                                     .toLocaleDateString()}
                                 </div>
-                                <div className="text-sm text-gray-900">
+                                <div>
                                   {expense.spentAt
                                     .toDate()
                                     .toLocaleTimeString()}
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
                                 <a
                                   href="#"
                                   className="text-indigo-600 hover:text-indigo-900"
                                 >
-                                  Edit
+                                  <AiOutlineEdit size={18} />
                                 </a>
                               </td>
                             </tr>
