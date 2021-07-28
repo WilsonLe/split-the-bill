@@ -42,7 +42,7 @@ const App: FC = () => {
   useEffect(() => {
     if (user)
       (async () => {
-        const userRef = db.collection("user").doc(user?.uid);
+        const userRef = db.collection("users").doc(user?.uid);
         const userSnap = await userRef.get();
         if (!userSnap.exists) {
           userRef.set({
@@ -54,7 +54,7 @@ const App: FC = () => {
       })();
   }, [user]);
   const [theme, setTheme] = useState("dark");
-  
+
   return (
     <>
       <UserContext.Provider value={user}>

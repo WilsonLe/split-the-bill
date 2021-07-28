@@ -1,7 +1,7 @@
 import React, { FC, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { db, firebase } from "../../../../firebase.config";
-import { Event, Expenses } from "../../../interfaces";
+import { dummyExpenses, Event, Expense } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {
@@ -29,12 +29,9 @@ const NewJobPrompt: FC<Props> = ({
     }
 
     if (user) {
-      const newEvent: Event = {
+      const newEvent = {
         name: eventName,
         code: uuidv4(),
-        expenses: [
-          { [user.uid]: 0, spentAt: firebase.firestore.Timestamp.now() },
-        ] as Expenses,
         members: [user.uid],
         createdAt: firebase.firestore.Timestamp.now(),
         creator: {
@@ -44,9 +41,21 @@ const NewJobPrompt: FC<Props> = ({
           email: user.email as string,
         },
       };
+
+      const expense = {
+        user: user.uid,
+        amount: 0,
+        spentAt: firebase.firestore.Timestamp.now(),
+      } as Expense;
+
       try {
-        await db.collection("events").add(newEvent);
-        setNewEventData(newEvent);
+        const newlyCreatedEvent = await db.collection("events").add(newEvent);
+        await db
+          .collection("events")
+          .doc(newlyCreatedEvent.id)
+          .collection("expenses")
+          .add(expense);
+        setNewEventData({ ...newEvent, id: newlyCreatedEvent.id } as Event);
         setShowEventLink(true);
       } catch (error) {
         alert(error.toString());

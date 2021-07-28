@@ -36,30 +36,30 @@ const EventDetail: FC<Props> = () => {
           .get();
         if (currentEventSnapshot.empty) setIsValidCode(false);
         currentEventSnapshot.forEach((e) => {
-          setCurrentEvent({ id: e.id, ...(e.data() as Event) } as Event);
+          setCurrentEvent({ ...(e.data() as Event) } as Event);
         });
       })();
     } else setIsValidCode(false);
   }, [eventCode]);
 
   // fetch users data from event data
-  useEffect(() => {
-    if (currentEvent) {
-      (async () => {
-        const tempMembers: UserInfos = [];
-        for (let i = 0; i < currentEvent.members.length; i++) {
-          const userRef = db.collection("users").doc(currentEvent.members[i]);
-          const userSnap = await userRef.get();
-          if (userSnap.exists) {
-            tempMembers.push(userSnap.data() as UserInfo);
-          } else {
-            console.log(`unknown user with uid ${userRef.id}`);
-          }
-        }
-        setMembers(tempMembers);
-      })();
-    }
-  }, [currentEvent]);
+  // useEffect(() => {
+  //   if (currentEvent) {
+  //     (async () => {
+  //       const tempMembers: UserInfos = [];
+  //       for (let i = 0; i < currentEvent.members.length; i++) {
+  //         const userRef = db.collection("users").doc(currentEvent.members[i]);
+  //         const userSnap = await userRef.get();
+  //         if (userSnap.exists) {
+  //           tempMembers.push(userSnap.data() as UserInfo);
+  //         } else {
+  //           console.log(`unknown user with uid ${userRef.id}`);
+  //         }
+  //       }
+  //       setMembers(tempMembers);
+  //     })();
+  //   }
+  // }, [currentEvent]);
 
   return (
     <>
@@ -73,8 +73,8 @@ const EventDetail: FC<Props> = () => {
           </h3>
           <span className="w-20">event info</span>
         </div>
-        <Members members={members} />
-        <Expense members={members} expenses={currentEvent?.expenses} />
+        <Members eventId={currentEvent?.id} />
+        <Expense eventId={currentEvent?.id} />
       </Border>
     </>
   );

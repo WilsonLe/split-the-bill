@@ -5,10 +5,10 @@ import classNames from "../../../utils/classNames";
 import { UserInfos } from "../../interfaces";
 
 interface Props {
-  members: UserInfos;
+  eventId: string;
 }
 
-const Members: FC<Props> = ({ members }) => {
+const Members: FC<Props> = ({ eventId }) => {
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -28,7 +28,7 @@ const Members: FC<Props> = ({ members }) => {
               </div>
             </Disclosure.Button>
 
-            <Disclosure.Panel>
+            {/* <Disclosure.Panel>
               {members &&
                 members.map((member) => (
                   <div key={member.uid}>
@@ -37,7 +37,7 @@ const Members: FC<Props> = ({ members }) => {
                     <p>{member.photoURL}</p>
                   </div>
                 ))}
-            </Disclosure.Panel>
+            </Disclosure.Panel> */}
           </>
         )}
       </Disclosure>
