@@ -15,6 +15,7 @@ import ExpensesList from "./ExpensesList";
 import ExpenseList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
 import MembersList from "./MembersList";
+import SplitTheBill from "./SplitTheBill";
 
 interface Props {}
 
@@ -76,6 +77,8 @@ const EventDetail: FC<Props> = () => {
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList members={members} expenses={currentEvent?.expenses} />
+        
+        <SplitTheBill />
       </Border>
     </>
   );
