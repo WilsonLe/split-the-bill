@@ -11,6 +11,7 @@ import {
   UserInfo,
   UserInfos,
 } from "../../interfaces";
+import AddExpense from "./AddExpense";
 import ExpensesList from "./ExpensesList";
 import ExpenseList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
@@ -77,8 +78,8 @@ const EventDetail: FC<Props> = () => {
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList members={members} expenses={currentEvent?.expenses} />
-        
         <SplitTheBill />
+        <AddExpense />
       </Border>
     </>
   );

@@ -8,7 +8,7 @@ import { dummyEvent } from "../../../interfaces";
 import Popup from "../../Popup";
 import NewJobButton from "./NewJobButton";
 import NewJobPrompt from "./NewJobPrompt";
-import { ButtonWhite } from "../../Button";
+import { ButtonLight } from "../../Button";
 
 interface Props {}
 
@@ -82,7 +82,7 @@ const NewEvent: FC<Props> = () => {
                   {`${window.location}event/${newEventData?.code}`}
                 </p>
                 <div>
-                  <ButtonWhite onClick={copyEventCodeHandler}>Copy</ButtonWhite>
+                  <ButtonLight onClick={copyEventCodeHandler}>Copy</ButtonLight>
                   {copyEventCode && (
                     <span className="absolute text-xs text-green-500">
                       copied

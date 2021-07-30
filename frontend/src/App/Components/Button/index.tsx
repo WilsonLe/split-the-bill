@@ -1,1 +1,2 @@
-export * from "./ButtonWhite";
+export * from "./ButtonLight";
+export * from './ButtonPrimaryIcon'

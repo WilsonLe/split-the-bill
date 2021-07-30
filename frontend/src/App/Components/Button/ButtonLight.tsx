@@ -2,7 +2,7 @@ import React, { FC } from "react";
 
 interface Props {}
 
-const ButtonWhite: FC<Props & React.HTMLProps<HTMLButtonElement>> = ({
+const ButtonLight: FC<Props & React.HTMLProps<HTMLButtonElement>> = ({
   children,
   ...props
 }) => {
@@ -17,4 +17,4 @@ const ButtonWhite: FC<Props & React.HTMLProps<HTMLButtonElement>> = ({
   );
 };
 
-export { ButtonWhite };
+export { ButtonLight };
