@@ -79,7 +79,10 @@ const EventDetail: FC<Props> = () => {
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList members={members} expenses={currentEvent?.expenses} />
         <SplitTheBill />
-        <AddExpense />
+        <AddExpense
+          currentEvent={currentEvent}
+          setCurrentEvent={setCurrentEvent}
+        />
       </Border>
     </>
   );

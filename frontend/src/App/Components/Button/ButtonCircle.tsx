@@ -5,7 +5,10 @@ interface Props {
   Icon: IconType;
 }
 
-const ButtonCircle: FC<Props> = ({ Icon, ...props }) => {
+const ButtonCircle: FC<Props & React.HTMLProps<HTMLButtonElement>> = ({
+  Icon,
+  ...props
+}) => {
   return (
     <button
       {...props}
