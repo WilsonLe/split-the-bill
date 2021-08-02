@@ -6,7 +6,8 @@ import { AiOutlinePlus } from "react-icons/ai";
 import ButtonCircle from "../../../Components/Button/ButtonCircle";
 import { Event } from "../../../interfaces";
 import classNames from "../../../../utils/classNames";
-import { Popover } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
+import AddExpensePrompt from "./AddExpensePrompt";
 
 interface Props {
   currentEvent: Event;
@@ -44,7 +45,10 @@ const AddExpense: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
           style={styles.popper}
           {...attributes.popper}
         >
-          <p>hello world</p>
+          <AddExpensePrompt
+            currentEvent={currentEvent}
+            setCurrentEvent={setCurrentEvent}
+          />
         </Popover.Panel>
       </Popover>
     </>
