@@ -7,9 +7,14 @@ import { v4 as uuidv4 } from "uuid";
 interface Props {
   currentEvent: Event;
   setCurrentEvent: React.Dispatch<React.SetStateAction<Event>>;
+  buttonRef: HTMLButtonElement | null | undefined;
 }
 
-const AddExpensePrompt: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
+const AddExpensePrompt: FC<Props> = ({
+  currentEvent,
+  setCurrentEvent,
+  buttonRef,
+}) => {
   const user = useContext(UserContext);
   const [note, setNote] = useState("");
   const [amount, setAmount] = useState<string | number>(0);
@@ -41,6 +46,7 @@ const AddExpensePrompt: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
       } catch (error) {
         alert(error);
       }
+      buttonRef?.click();
     }
   };
 

@@ -5,7 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 import ButtonCircle from "../../../Components/Button/ButtonCircle";
 import { Event } from "../../../interfaces";
-import { Popover } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import AddExpensePrompt from "./AddExpensePrompt";
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
 }
 
 const AddExpense: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
-  const [showPopper, setShowPopper] = useState(false);
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>();
   const [popperRef, setPopperRef] = useState<HTMLDivElement | null>();
   const { styles, attributes } = usePopper(buttonRef, popperRef, {
@@ -33,22 +32,23 @@ const AddExpense: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
   return (
     <>
       <Popover>
-        <Popover.Button
-          ref={setButtonRef}
-          onClick={() => setShowPopper(!showPopper)}
-        >
-          <ButtonCircle Icon={AiOutlinePlus} as="div" />
-        </Popover.Button>
-        <Popover.Panel
-          ref={setPopperRef}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <AddExpensePrompt
-            currentEvent={currentEvent}
-            setCurrentEvent={setCurrentEvent}
-          />
-        </Popover.Panel>
+        <>
+          <Popover.Button ref={setButtonRef}>
+            <ButtonCircle Icon={AiOutlinePlus} as="div" />
+          </Popover.Button>
+
+          <Popover.Panel
+            ref={setPopperRef}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <AddExpensePrompt
+              currentEvent={currentEvent}
+              setCurrentEvent={setCurrentEvent}
+              buttonRef={buttonRef}
+            />
+          </Popover.Panel>
+        </>
       </Popover>
     </>
   );
