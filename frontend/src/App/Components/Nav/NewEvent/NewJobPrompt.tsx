@@ -10,7 +10,11 @@ interface Props {
   setCurrentEvent: React.Dispatch<React.SetStateAction<Event>>;
 }
 
-const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink,setCurrentEvent }) => {
+const NewJobPrompt: FC<Props> = ({
+  setOpen,
+  setShowEventLink,
+  setCurrentEvent,
+}) => {
   const [eventName, setEventName] = useState("");
   const [error, setError] = useState("");
   const user = useContext(UserContext);
@@ -29,15 +33,7 @@ const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink,setCurrentEvent }) 
         code: uuidv4(),
         createdAt: firebase.firestore.Timestamp.now(),
         members: [user.uid],
-        expenses: [
-          {
-            id: uuidv4(),
-            user: user.uid,
-            amount: 0,
-            description: "test description",
-            spentAt: firebase.firestore.Timestamp.now(),
-          } as Expense,
-        ] as Expenses,
+        expenses: [] as Expenses,
         creator: {
           uid: user.uid,
           photoURL: user.photoURL as string,

@@ -3,7 +3,12 @@ import { ChevronRightIcon } from "@heroicons/react/outline";
 import React, { FC, useEffect, useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
 import classNames from "../../../utils/classNames";
-import { DetailExpenses, Expenses, UserInfos } from "../../interfaces";
+import {
+  DetailExpense,
+  DetailExpenses,
+  Expenses,
+  UserInfos,
+} from "../../interfaces";
 
 interface Props {
   members: UserInfos;
@@ -14,13 +19,21 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
   const [detailExpenses, setDetailExpenses] = useState<DetailExpenses>([]);
   useEffect(() => {
     if (members && expenses) {
-      const tempDetailExpense = expenses.map((expense) => {
+      const sortedExpense = expenses.sort(
+        (a, b) => b.spentAt.toMillis() - a.spentAt.toMillis()
+      );
+      const tempDetailExpense = sortedExpense.map((expense) => {
         const user = members.find((member) => member.uid === expense.user);
         return { ...expense, user };
       }) as DetailExpenses;
       setDetailExpenses(tempDetailExpense);
     }
   }, [members, expenses]);
+
+  const editHandler = (expense: DetailExpense) => {
+    console.log(expense);
+  };
+
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure>
@@ -119,12 +132,12 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
                                 </div>
                               </td>
                               <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
-                                <a
-                                  href="#"
+                                <button
+                                  onClick={() => editHandler(expense)}
                                   className="text-indigo-600 hover:text-indigo-900"
                                 >
                                   <AiOutlineEdit size={18} />
-                                </a>
+                                </button>
                               </td>
                             </tr>
                           ))}
