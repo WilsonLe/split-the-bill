@@ -1,21 +1,18 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import React, { FC, useEffect, useState } from "react";
-import { AiOutlineEdit } from "react-icons/ai";
+
 import classNames from "../../../utils/classNames";
-import {
-  DetailExpense,
-  DetailExpenses,
-  Expenses,
-  UserInfos,
-} from "../../interfaces";
+import { DetailExpenses, Event, Expenses, UserInfos } from "../../interfaces";
+import EditExpense from "./EditExpense";
 
 interface Props {
+  currentEvent: Event;
   members: UserInfos;
   expenses: Expenses;
 }
 
-const ExpensesList: FC<Props> = ({ members, expenses }) => {
+const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
   const [detailExpenses, setDetailExpenses] = useState<DetailExpenses>([]);
   useEffect(() => {
     if (members && expenses) {
@@ -29,10 +26,6 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
       setDetailExpenses(tempDetailExpense);
     }
   }, [members, expenses]);
-
-  const editHandler = (expense: DetailExpense) => {
-    console.log(expense);
-  };
 
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
@@ -132,12 +125,10 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
                                 </div>
                               </td>
                               <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
-                                <button
-                                  onClick={() => editHandler(expense)}
-                                  className="text-indigo-600 hover:text-indigo-900"
-                                >
-                                  <AiOutlineEdit size={18} />
-                                </button>
+                                <EditExpense
+                                  currentEvent={currentEvent}
+                                  expense={expense}
+                                />
                               </td>
                             </tr>
                           ))}

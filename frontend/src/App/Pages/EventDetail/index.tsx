@@ -32,16 +32,15 @@ const EventDetail: FC<Props> = () => {
   // fetch event data from eventCode
   useEffect(() => {
     if (eventCode) {
-      (async () => {
-        const currentEventSnapshot = await db
-          .collection("events")
-          .where("code", "==", eventCode)
-          .get();
-        if (currentEventSnapshot.empty) setIsValidCode(false);
-        currentEventSnapshot.forEach((e) => {
-          setCurrentEvent({ ...(e.data() as Event) } as Event);
+      const unsubscribe = db
+        .collection("events")
+        .where("code", "==", eventCode)
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            setCurrentEvent(doc.data() as Event);
+          });
         });
-      })();
+      return () => unsubscribe();
     } else setIsValidCode(false);
   }, [eventCode]);
 
@@ -77,7 +76,11 @@ const EventDetail: FC<Props> = () => {
           <span className="w-20">event info</span>
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
-        <ExpensesList members={members} expenses={currentEvent?.expenses} />
+        <ExpensesList
+          currentEvent={currentEvent}
+          members={members}
+          expenses={currentEvent?.expenses}
+        />
         <SplitTheBill />
         <AddExpense
           currentEvent={currentEvent}

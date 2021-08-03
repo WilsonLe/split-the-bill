@@ -40,9 +40,12 @@ const AddExpensePrompt: FC<Props> = ({
           .collection("events")
           .where("code", "==", currentEvent.code)
           .get();
-        eventSnap.forEach((event) =>
-          db.collection("events").doc(event.id).update(updatedEvent)
-        );
+        if (eventSnap.empty) alert("error 404 resource not found");
+        else {
+          eventSnap.forEach((event) =>
+            db.collection("events").doc(event.id).update(updatedEvent)
+          );
+        }
       } catch (error) {
         alert(error);
       }
