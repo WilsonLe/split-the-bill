@@ -1,21 +1,20 @@
-import React, { FC, Fragment, useRef, useState } from "react";
+import React, { FC, Fragment, useContext, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 import useOnClickOutside from "../../../../utils/useOnClickOutside";
-
-import { dummyEvent } from "../../../interfaces";
 
 import Popup from "../../Popup";
 import NewJobButton from "./NewJobButton";
 import NewJobPrompt from "./NewJobPrompt";
 import { ButtonLight } from "../../Button";
+import { dummyEvent } from "../../../interfaces";
 
 interface Props {}
 
 const NewEvent: FC<Props> = () => {
   const [open, setOpen] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
-  const [newEventData, setNewEventData] = useState(dummyEvent);
+  const [currentEvent, setCurrentEvent] = useState(dummyEvent);
   const [copyEventCode, setCopyEventCode] = useState(false);
 
   const NewJobRef = useRef(null);
@@ -26,7 +25,7 @@ const NewEvent: FC<Props> = () => {
   ) => {
     setCopyEventCode(true);
     navigator.clipboard.writeText(
-      `${window.location}event/${newEventData?.code}`
+      `${window.location}event/${currentEvent?.code}`
     );
   };
 
@@ -56,7 +55,7 @@ const NewEvent: FC<Props> = () => {
             <NewJobPrompt
               setOpen={setOpen}
               setShowEventLink={setShowEventLink}
-              setNewEventData={setNewEventData}
+              setCurrentEvent={setCurrentEvent}
             />
           )}
         </Transition>
@@ -79,7 +78,7 @@ const NewEvent: FC<Props> = () => {
               </Dialog.Title>
               <div className="mt-2">
                 <p className="text-sm text-gray-500 text-left p-4 mb-4 border border-gray-300 shadow-sm rounded-sm">
-                  {`${window.location}event/${newEventData?.code}`}
+                  {`${window.location}event/${currentEvent?.code}`}
                 </p>
                 <div>
                   <ButtonLight onClick={copyEventCodeHandler}>Copy</ButtonLight>

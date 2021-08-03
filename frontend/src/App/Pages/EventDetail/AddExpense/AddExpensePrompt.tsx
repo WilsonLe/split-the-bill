@@ -1,5 +1,8 @@
-import React, { FC, useState } from "react";
-import { Event } from "../../../interfaces";
+import React, { FC, useContext, useEffect, useState } from "react";
+import UserContext from "../../../Contexts/UserContext";
+import { db, firebase } from "../../../../firebase.config";
+import { Event, Expense } from "../../../interfaces";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
   currentEvent: Event;
@@ -7,11 +10,38 @@ interface Props {
 }
 
 const AddExpensePrompt: FC<Props> = ({ currentEvent, setCurrentEvent }) => {
+  const user = useContext(UserContext);
   const [note, setNote] = useState("");
   const [amount, setAmount] = useState<string | number>(0);
-
-  const addExpenseHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const addExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (user && currentEvent) {
+      const updatedEvent = {
+        ...currentEvent,
+        expenses: [
+          ...currentEvent.expenses,
+          {
+            id: uuidv4(),
+            user: user.uid,
+            amount: amount as number,
+            description: note,
+            spentAt: firebase.firestore.Timestamp.now(),
+          } as Expense,
+        ],
+      };
+      setCurrentEvent(updatedEvent);
+      try {
+        const eventSnap = await db
+          .collection("events")
+          .where("code", "==", currentEvent.code)
+          .get();
+        eventSnap.forEach((event) =>
+          db.collection("events").doc(event.id).update(updatedEvent)
+        );
+      } catch (error) {
+        alert(error);
+      }
+    }
   };
 
   const noteChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

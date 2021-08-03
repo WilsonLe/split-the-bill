@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -12,6 +12,7 @@ import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
 import NotFound from "./Pages/NotFound";
+import { dummyEvent, Event } from "./interfaces";
 
 const pages = [
   {
@@ -38,6 +39,8 @@ const pages = [
 
 const App: FC = () => {
   const [user] = useAuthState(firebase.auth());
+  const theme = useContext(ThemeContext);
+
   // check if user already in db
   useEffect(() => {
     if (user)
@@ -54,7 +57,6 @@ const App: FC = () => {
         }
       })();
   }, [user]);
-  const [theme, setTheme] = useState("dark");
 
   return (
     <>

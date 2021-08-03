@@ -16,7 +16,6 @@ const ExpensesList: FC<Props> = ({ members, expenses }) => {
     if (members && expenses) {
       const tempDetailExpense = expenses.map((expense) => {
         const user = members.find((member) => member.uid === expense.user);
-        console.log(members);
         return { ...expense, user };
       }) as DetailExpenses;
       setDetailExpenses(tempDetailExpense);

@@ -7,17 +7,12 @@ import UserContext from "../../../Contexts/UserContext";
 interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEventLink: React.Dispatch<React.SetStateAction<boolean>>;
-  setNewEventData: React.Dispatch<React.SetStateAction<Event>>;
+  setCurrentEvent: React.Dispatch<React.SetStateAction<Event>>;
 }
 
-const NewJobPrompt: FC<Props> = ({
-  setOpen,
-  setShowEventLink,
-  setNewEventData,
-}) => {
+const NewJobPrompt: FC<Props> = ({ setOpen, setShowEventLink,setCurrentEvent }) => {
   const [eventName, setEventName] = useState("");
   const [error, setError] = useState("");
-
   const user = useContext(UserContext);
 
   const createEvent = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,11 +44,11 @@ const NewJobPrompt: FC<Props> = ({
           displayName: user.displayName as string,
           email: user.email as string,
         },
-      };
+      } as Event;
 
       try {
         const newlyCreatedEvent = await db.collection("events").add(newEvent);
-        setNewEventData({ ...newEvent, id: newlyCreatedEvent.id } as Event);
+        setCurrentEvent({ ...newEvent, id: newlyCreatedEvent.id } as Event);
         setShowEventLink(true);
       } catch (error) {
         alert(error.toString());
