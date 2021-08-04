@@ -3,6 +3,8 @@ import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
 import Border from "../../Components/Border";
+import { ButtonLight } from "../../Components/Button";
+import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
   dummyEvent,
@@ -26,6 +28,7 @@ const EventDetail: FC<Props> = () => {
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isMember, setIsMember] = useState(false);
+  const [showEventLink, setShowEventLink] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
@@ -73,7 +76,15 @@ const EventDetail: FC<Props> = () => {
           <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
             {currentEvent?.name}
           </h3>
-          <span className="w-20">event info</span>
+          <ButtonLight onClick={() => setShowEventLink(true)}>
+            Event link
+          </ButtonLight>
+          <EventCode
+            showEventLink={showEventLink}
+            setShowEventLink={setShowEventLink}
+            currentEvent={currentEvent}
+            title={"Event Link"}
+          />
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList

@@ -6,7 +6,7 @@ interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Popup: FC<Props> = ({ open, setOpen, children }) => {
+const BasePopup: FC<Props> = ({ open, setOpen, children }) => {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -55,4 +55,4 @@ const Popup: FC<Props> = ({ open, setOpen, children }) => {
   );
 };
 
-export default Popup;
+export { BasePopup };

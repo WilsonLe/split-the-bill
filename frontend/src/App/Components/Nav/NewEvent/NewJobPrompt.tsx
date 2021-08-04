@@ -1,7 +1,7 @@
 import React, { FC, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { db, firebase } from "../../../../firebase.config";
-import { dummyExpenses, Event, Expense, Expenses } from "../../../interfaces";
+import { Event, Expenses } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {

@@ -29,7 +29,7 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
 
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
-      <Disclosure>
+      <Disclosure defaultOpen={true}>
         {({ open }) => (
           <>
             <Disclosure.Button>
