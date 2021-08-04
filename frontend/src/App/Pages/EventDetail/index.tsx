@@ -3,7 +3,7 @@ import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
 import Border from "../../Components/Border";
-import { ButtonLight } from "../../Components/Button";
+import { ButtonLight, ButtonRed } from "../../Components/Button";
 import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
@@ -76,15 +76,14 @@ const EventDetail: FC<Props> = () => {
           <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
             {currentEvent?.name}
           </h3>
-          <ButtonLight onClick={() => setShowEventLink(true)}>
-            Event link
-          </ButtonLight>
+          <ButtonLight onClick={() => setShowEventLink(true)}>Link</ButtonLight>
           <EventCode
             showEventLink={showEventLink}
             setShowEventLink={setShowEventLink}
             currentEvent={currentEvent}
             title={"Event Link"}
           />
+          <ButtonRed>Delete</ButtonRed>
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList

@@ -17,4 +17,4 @@ const ButtonLight: FC<Props & React.HTMLProps<HTMLButtonElement>> = ({
   );
 };
 
-export { ButtonLight };
+export default ButtonLight;
