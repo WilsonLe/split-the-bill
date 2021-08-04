@@ -4,6 +4,7 @@ import { db } from "../../../firebase.config";
 
 import Border from "../../Components/Border";
 import { ButtonLight, ButtonRed } from "../../Components/Button";
+import ConfirmDelete from "../../Components/Popup/ConfirmDelete";
 import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
@@ -29,6 +30,8 @@ const EventDetail: FC<Props> = () => {
   const [isValidCode, setIsValidCode] = useState(true);
   const [isMember, setIsMember] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [eventDeleted, setEventDeleted] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
@@ -66,11 +69,22 @@ const EventDetail: FC<Props> = () => {
     }
   }, [currentEvent]);
 
+  const deleteEventHandler = async (currentEvent: Event) => {
+    const eventSnap = await db
+      .collection("events")
+      .where("code", "==", currentEvent.code)
+      .get();
+    eventSnap.forEach((e) => e.ref.delete());
+    await new Promise((res, rej) => setTimeout(res, 500));
+    setEventDeleted(true);
+  };
+
   return (
     <>
       {!user && <Redirect to="/login" />}
       {!isValidCode && <Redirect to="/notfound" />}
       {!isMember && <JoinEvent />}
+      {eventDeleted && <Redirect to="/" />}
       <Border>
         <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
           <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
@@ -83,7 +97,15 @@ const EventDetail: FC<Props> = () => {
             currentEvent={currentEvent}
             title={"Event Link"}
           />
-          <ButtonRed>Delete</ButtonRed>
+          <ButtonRed onClick={() => setShowConfirmDelete(true)}>
+            Delete
+          </ButtonRed>
+          <ConfirmDelete
+            showConfirmDelete={showConfirmDelete}
+            setShowConfirmDelete={setShowConfirmDelete}
+            currentEvent={currentEvent}
+            deleteEventHandler={deleteEventHandler}
+          />
         </div>
         <MembersList members={members} creator={currentEvent?.creator} />
         <ExpensesList

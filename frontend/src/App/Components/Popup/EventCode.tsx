@@ -31,29 +31,26 @@ const EventCode: FC<Props> = ({
   return (
     <>
       <BasePopup open={showEventLink} setOpen={setShowEventLink}>
-        <div>
-          <div className="mt-3 text-center sm:mt-5">
-            <Dialog.Title
-              as="h3"
-              className="text-lg leading-6 font-medium text-gray-900"
-            >
-              {title}
-            </Dialog.Title>
-            <div className="mt-2">
-              <p className="text-sm text-gray-500 text-left p-4 mb-4 border border-gray-300 shadow-sm rounded-sm">
-                {`${window.location.origin}/event?code=${currentEvent?.code}`}
-              </p>
-              <div>
-                <ButtonLight onClick={copyEventCodeHandler}>Copy</ButtonLight>
-                {copyEventCode && (
-                  <span className="absolute text-xs text-green-500">
-                    copied
-                  </span>
-                )}
-              </div>
+        <div className="mt-3 text-center sm:mt-5">
+          <Dialog.Title
+            as="h3"
+            className="text-lg leading-6 font-medium text-gray-900"
+          >
+            {title}
+          </Dialog.Title>
+          <div className="mt-2">
+            <p className="text-sm text-gray-500 text-left p-4 mb-4 border border-gray-300 shadow-sm rounded-sm">
+              {`${window.location.origin}/event?code=${currentEvent?.code}`}
+            </p>
+            <div>
+              <ButtonLight onClick={copyEventCodeHandler}>Copy</ButtonLight>
+              {copyEventCode && (
+                <span className="absolute text-xs text-green-500">copied</span>
+              )}
             </div>
           </div>
         </div>
+
         <div className="mt-5 sm:mt-6">
           <button
             type="button"
