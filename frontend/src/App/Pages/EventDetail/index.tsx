@@ -28,7 +28,9 @@ const EventDetail: FC<Props> = () => {
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
-  const [isMember, setIsMember] = useState(false);
+  const [isMember, setIsMember] = useState(true);
+  const [isCreator, setIsCreator] = useState(false);
+  const [checkMember, setCheckMember] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [eventDeleted, setEventDeleted] = useState(false);
@@ -69,6 +71,22 @@ const EventDetail: FC<Props> = () => {
     }
   }, [currentEvent]);
 
+  // check if user is in member list
+  useEffect(() => {
+    if (user && currentEvent) {
+      if (!currentEvent.members.includes(user.uid)) {
+        setIsMember(false);
+      } else {
+        setIsMember(true);
+      }
+      setCheckMember(true);
+    }
+  }, [currentEvent?.members]);
+
+  // check if user is creator
+  useEffect(() => {
+    // if (user){if (user.uid === db.collection('events'))}
+  }, []);
   const deleteEventHandler = async (currentEvent: Event) => {
     const eventSnap = await db
       .collection("events")
@@ -78,49 +96,52 @@ const EventDetail: FC<Props> = () => {
     await new Promise((res, rej) => setTimeout(res, 500));
     setEventDeleted(true);
   };
-
-  return (
-    <>
-      {!user && <Redirect to="/login" />}
-      {!isValidCode && <Redirect to="/notfound" />}
-      {!isMember && <JoinEvent />}
-      {eventDeleted && <Redirect to="/" />}
-      <Border>
-        <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
-          <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
-            {currentEvent?.name}
-          </h3>
-          <ButtonLight onClick={() => setShowEventLink(true)}>Link</ButtonLight>
-          <EventCode
-            showEventLink={showEventLink}
-            setShowEventLink={setShowEventLink}
+  if (checkMember) {
+    return (
+      <>
+        {!user && <Redirect to="/login" />}
+        {!isValidCode && <Redirect to="/notfound" />}
+        {!isMember && <JoinEvent currentEvent={currentEvent} />}
+        {eventDeleted && <Redirect to="/" />}
+        <Border>
+          <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
+            <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
+              {currentEvent?.name}
+            </h3>
+            <ButtonLight onClick={() => setShowEventLink(true)}>
+              Link
+            </ButtonLight>
+            <EventCode
+              showEventLink={showEventLink}
+              setShowEventLink={setShowEventLink}
+              currentEvent={currentEvent}
+              title={"Event Link"}
+            />
+            <ButtonRed onClick={() => setShowConfirmDelete(true)}>
+              Delete
+            </ButtonRed>
+            <ConfirmDelete
+              showConfirmDelete={showConfirmDelete}
+              setShowConfirmDelete={setShowConfirmDelete}
+              currentEvent={currentEvent}
+              deleteEventHandler={deleteEventHandler}
+            />
+          </div>
+          <MembersList members={members} creator={currentEvent?.creator} />
+          <ExpensesList
             currentEvent={currentEvent}
-            title={"Event Link"}
+            members={members}
+            expenses={currentEvent?.expenses}
           />
-          <ButtonRed onClick={() => setShowConfirmDelete(true)}>
-            Delete
-          </ButtonRed>
-          <ConfirmDelete
-            showConfirmDelete={showConfirmDelete}
-            setShowConfirmDelete={setShowConfirmDelete}
+          <SplitTheBill />
+          <AddExpense
             currentEvent={currentEvent}
-            deleteEventHandler={deleteEventHandler}
+            setCurrentEvent={setCurrentEvent}
           />
-        </div>
-        <MembersList members={members} creator={currentEvent?.creator} />
-        <ExpensesList
-          currentEvent={currentEvent}
-          members={members}
-          expenses={currentEvent?.expenses}
-        />
-        <SplitTheBill />
-        <AddExpense
-          currentEvent={currentEvent}
-          setCurrentEvent={setCurrentEvent}
-        />
-      </Border>
-    </>
-  );
+        </Border>
+      </>
+    );
+  } else return null;
 };
 
 export default EventDetail;

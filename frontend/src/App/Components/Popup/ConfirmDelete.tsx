@@ -2,7 +2,7 @@ import { Dialog } from "@headlessui/react";
 import React, { FC, useRef } from "react";
 import { BasePopup } from ".";
 import { Event } from "../../interfaces";
-import { ButtonLight, ButtonPrimary } from "../Button";
+import { ButtonLight, ButtonPrimary, ButtonRed } from "../Button";
 
 interface Props {
   showConfirmDelete: boolean;
@@ -37,14 +37,14 @@ const ConfirmDelete: FC<Props> = ({
               </ButtonLight>
             </div>
 
-            <ButtonPrimary
+            <ButtonRed
               onClick={() => {
                 setShowConfirmDelete(false);
                 deleteEventHandler(currentEvent);
               }}
             >
-              Deactivate
-            </ButtonPrimary>
+              Delete
+            </ButtonRed>
           </div>
         </div>
       </div>
