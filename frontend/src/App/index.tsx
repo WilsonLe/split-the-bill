@@ -43,19 +43,23 @@ const App: FC = () => {
 
   // check if user already in db
   useEffect(() => {
-    if (user)
-      (async () => {
-        const userRef = db.collection("users").doc(user?.uid);
-        const userSnap = await userRef.get();
-        if (!userSnap.exists) {
-          userRef.set({
-            uid: user.uid,
-            photoURL: user.photoURL,
-            displayName: user.displayName,
-            email: user.email,
-          });
-        }
-      })();
+    try {
+      if (user)
+        (async () => {
+          const userRef = db.collection("users").doc(user?.uid);
+          const userSnap = await userRef.get();
+          if (!userSnap.exists) {
+            userRef.set({
+              uid: user.uid,
+              photoURL: user.photoURL,
+              displayName: user.displayName,
+              email: user.email,
+            });
+          }
+        })();
+    } catch (error) {
+      console.log("error 1");
+    }
   }, [user]);
 
   return (

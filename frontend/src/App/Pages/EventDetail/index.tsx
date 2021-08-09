@@ -39,34 +39,42 @@ const EventDetail: FC<Props> = () => {
 
   // fetch event data from eventCode
   useEffect(() => {
-    if (eventCode) {
-      const unsubscribe = db
-        .collection("events")
-        .where("code", "==", eventCode)
-        .onSnapshot((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            setCurrentEvent(doc.data() as Event);
+    try {
+      if (eventCode) {
+        const unsubscribe = db
+          .collection("events")
+          .where("code", "==", eventCode)
+          .onSnapshot((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              setCurrentEvent(doc.data() as Event);
+            });
           });
-        });
-      return () => unsubscribe();
-    } else setIsValidCode(false);
+        return () => unsubscribe();
+      } else setIsValidCode(false);
+    } catch (error) {
+      console.log("error 3");
+    }
   }, [eventCode]);
 
-  // fetch users data from event data
+  // fetch members data from event data
   useEffect(() => {
     if (currentEvent) {
       (async () => {
-        const tempMembers: UserInfos = [];
-        for (let i = 0; i < currentEvent.members.length; i++) {
-          const userRef = db.collection("users").doc(currentEvent.members[i]);
-          const userSnap = await userRef.get();
-          if (userSnap.exists) {
-            tempMembers.push(userSnap.data() as UserInfo);
-          } else {
-            console.log(`unknown user with uid ${userRef.id}`);
+        try {
+          const tempMembers: UserInfos = [];
+          for (let i = 0; i < currentEvent.members.length; i++) {
+            const userRef = db.collection("users").doc(currentEvent.members[i]);
+            const userSnap = await userRef.get();
+            if (userSnap.exists) {
+              tempMembers.push(userSnap.data() as UserInfo);
+            } else {
+              console.log(`unknown user with uid ${userRef.id}`);
+            }
           }
+          setMembers(tempMembers);
+        } catch (error) {
+          console.log("error 2");
         }
-        setMembers(tempMembers);
       })();
     }
   }, [currentEvent]);
