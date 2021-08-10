@@ -44,6 +44,8 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
             });
           }
         } catch (error) {
+          console.log("error 6");
+
           alert(error.toString());
         }
       }
@@ -72,6 +74,8 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
           });
         }
       } catch (error) {
+        console.log("error 7");
+
         alert(error.toString());
       }
     }

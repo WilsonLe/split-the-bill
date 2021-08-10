@@ -28,9 +28,10 @@ const NewJobPrompt: FC<Props> = ({
     }
 
     if (user) {
+      const eventCode = uuidv4();
       const newEvent = {
         name: eventName,
-        code: uuidv4(),
+        code: eventCode,
         createdAt: firebase.firestore.Timestamp.now(),
         members: [user.uid],
         expenses: [] as Expenses,
@@ -43,10 +44,12 @@ const NewJobPrompt: FC<Props> = ({
       } as Event;
 
       try {
-        const newlyCreatedEvent = await db.collection("events").add(newEvent);
-        setCurrentEvent({ ...newEvent, id: newlyCreatedEvent.id } as Event);
+        db.collection("events").doc(eventCode).set(newEvent);
+        setCurrentEvent({ ...newEvent, id: eventCode } as Event);
         setShowEventLink(true);
       } catch (error) {
+        console.log("error 2");
+
         alert(error.toString());
       }
     }

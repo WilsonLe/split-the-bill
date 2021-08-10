@@ -29,7 +29,6 @@ const EventDetail: FC<Props> = () => {
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isMember, setIsMember] = useState(true);
-  const [isCreator, setIsCreator] = useState(false);
   const [checkMember, setCheckMember] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -39,21 +38,20 @@ const EventDetail: FC<Props> = () => {
 
   // fetch event data from eventCode
   useEffect(() => {
-    try {
-      if (eventCode) {
-        const unsubscribe = db
-          .collection("events")
-          .where("code", "==", eventCode)
-          .onSnapshot((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              setCurrentEvent(doc.data() as Event);
-            });
-          });
-        return () => unsubscribe();
-      } else setIsValidCode(false);
-    } catch (error) {
-      console.log("error 3");
-    }
+    if (eventCode) {
+      const unsubscribe = db
+        .collection("events")
+        .doc(eventCode)
+        .onSnapshot(
+          (doc) => {
+            setCurrentEvent(doc.data() as Event);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      return () => unsubscribe();
+    } else setIsValidCode(false);
   }, [eventCode]);
 
   // fetch members data from event data
@@ -73,7 +71,7 @@ const EventDetail: FC<Props> = () => {
           }
           setMembers(tempMembers);
         } catch (error) {
-          console.log("error 2");
+          console.log("error 4");
         }
       })();
     }
@@ -96,13 +94,17 @@ const EventDetail: FC<Props> = () => {
     // if (user){if (user.uid === db.collection('events'))}
   }, []);
   const deleteEventHandler = async (currentEvent: Event) => {
-    const eventSnap = await db
-      .collection("events")
-      .where("code", "==", currentEvent.code)
-      .get();
-    eventSnap.forEach((e) => e.ref.delete());
-    await new Promise((res, rej) => setTimeout(res, 500));
-    setEventDeleted(true);
+    try {
+      const eventSnap = await db
+        .collection("events")
+        .where("code", "==", currentEvent.code)
+        .get();
+      eventSnap.forEach((e) => e.ref.delete());
+      await new Promise((res, rej) => setTimeout(res, 500));
+      setEventDeleted(true);
+    } catch (error) {
+      console.log("error 9");
+    }
   };
   if (checkMember) {
     return (

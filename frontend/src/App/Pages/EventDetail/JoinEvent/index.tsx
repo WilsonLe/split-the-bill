@@ -31,7 +31,7 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
         );
       }
     } catch (error) {
-      console.log("error 4");
+      console.log("error 8");
     }
   };
 

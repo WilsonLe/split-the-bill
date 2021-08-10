@@ -47,6 +47,8 @@ const AddExpensePrompt: FC<Props> = ({
           );
         }
       } catch (error) {
+        console.log("error 5");
+
         alert(error);
       }
       buttonRef?.click();

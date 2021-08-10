@@ -19,22 +19,23 @@ const Main: FC<Props> = () => {
   // fetch all event that has current user a member
   useEffect(() => {
     if (user) {
-      try {
-        const unsubscribe = db
-          .collection("events")
-          .where("members", "array-contains", user.uid)
-          .onSnapshot((querySnapshot) => {
+      const unsubscribe = db
+        .collection("events")
+        .where("members", "array-contains", user.uid)
+        .onSnapshot(
+          (querySnapshot) => {
             const creatorEvents: Event[] = [];
             querySnapshot.forEach((doc) => {
               creatorEvents.push(doc.data() as Event);
             });
             setEventList(creatorEvents);
-          });
-        return () => unsubscribe();
-      } catch (error) {
-        console.log("error 5");
-        console.log(error);
-      }
+          },
+          (error) => {
+            console.log(error);
+            console.log("error 1");
+          }
+        );
+      return () => unsubscribe();
     }
   }, [user]);
 
