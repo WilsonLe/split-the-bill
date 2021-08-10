@@ -42,11 +42,14 @@ const EventCode: FC<Props> = ({
             <p className="text-sm text-gray-500 text-left p-4 mb-4 border border-gray-300 shadow-sm rounded-sm">
               {`${window.location.origin}/event?code=${currentEvent?.code}`}
             </p>
-            <div>
-              <ButtonLight onClick={copyEventCodeHandler}>Copy</ButtonLight>
-              {copyEventCode && (
-                <span className="absolute text-xs text-green-500">copied</span>
-              )}
+            <div className="relative">
+              <ButtonLight className="" onClick={copyEventCodeHandler}>
+                {copyEventCode ? (
+                  <span className="text-green-500">Copied</span>
+                ) : (
+                  <span>Copy</span>
+                )}
+              </ButtonLight>
             </div>
           </div>
         </div>
@@ -57,7 +60,7 @@ const EventCode: FC<Props> = ({
             className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
             onClick={() => {
               setShowEventLink(false);
-              setCopyEventCode(false);
+              setTimeout(() => setCopyEventCode(false), 250);
             }}
           >
             Done
