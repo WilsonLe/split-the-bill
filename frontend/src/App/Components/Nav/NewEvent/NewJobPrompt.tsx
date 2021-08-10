@@ -48,9 +48,7 @@ const NewJobPrompt: FC<Props> = ({
         setCurrentEvent({ ...newEvent, id: eventCode } as Event);
         setShowEventLink(true);
       } catch (error) {
-        console.log("error 2");
-
-        alert(error.toString());
+        console.log(error);
       }
     }
     setOpen(false);

@@ -18,20 +18,16 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
     try {
       if (user && currentEvent) {
         const updatedMembers = [...currentEvent.members, user.uid];
-        const eventSnap = await db
+        await db
           .collection("events")
-          .where("code", "==", currentEvent.code)
-          .get();
-        eventSnap.forEach(
-          async (e) =>
-            await e.ref.update({
-              ...currentEvent,
-              members: updatedMembers,
-            } as Event)
-        );
+          .doc(currentEvent.code)
+          .update({
+            ...currentEvent,
+            members: updatedMembers,
+          } as Event);
       }
     } catch (error) {
-      console.log("error 8");
+      console.log(error);
     }
   };
 

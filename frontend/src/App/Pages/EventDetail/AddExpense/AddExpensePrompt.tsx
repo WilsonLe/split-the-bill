@@ -36,20 +36,12 @@ const AddExpensePrompt: FC<Props> = ({
       };
       setCurrentEvent(updatedEvent);
       try {
-        const eventSnap = await db
+        await db
           .collection("events")
-          .where("code", "==", currentEvent.code)
-          .get();
-        if (eventSnap.empty) alert("error 404 resource not found");
-        else {
-          eventSnap.forEach((event) =>
-            db.collection("events").doc(event.id).update(updatedEvent)
-          );
-        }
+          .doc(currentEvent.code)
+          .update(updatedEvent);
       } catch (error) {
-        console.log("error 5");
-
-        alert(error);
+        console.log(error);
       }
       buttonRef?.click();
     }

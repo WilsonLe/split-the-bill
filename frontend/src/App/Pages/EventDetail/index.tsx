@@ -71,7 +71,7 @@ const EventDetail: FC<Props> = () => {
           }
           setMembers(tempMembers);
         } catch (error) {
-          console.log("error 4");
+          console.log(error);
         }
       })();
     }
@@ -93,30 +93,33 @@ const EventDetail: FC<Props> = () => {
   useEffect(() => {
     // if (user){if (user.uid === db.collection('events'))}
   }, []);
+
+  // check if currentEvent is empty (after event is deleted)
+  useEffect(() => {
+    // TODO: implement this
+  });
+
   const deleteEventHandler = async (currentEvent: Event) => {
     try {
-      const eventSnap = await db
-        .collection("events")
-        .where("code", "==", currentEvent.code)
-        .get();
-      eventSnap.forEach((e) => e.ref.delete());
-      await new Promise((res, rej) => setTimeout(res, 500));
+      await db.collection("events").doc(currentEvent.code).delete();
       setEventDeleted(true);
     } catch (error) {
-      console.log("error 9");
+      console.log(error);
     }
   };
-  if (checkMember) {
-    return (
-      <>
-        {!user && <Redirect to="/login" />}
-        {!isValidCode && <Redirect to="/notfound" />}
-        {!isMember && <JoinEvent currentEvent={currentEvent} />}
-        {eventDeleted && <Redirect to="/" />}
+
+  return (
+    <>
+      {!checkMember && null}
+      {!user && <Redirect to="/login" />}
+      {!isValidCode && <Redirect to="/notfound" />}
+      {!isMember && <JoinEvent currentEvent={currentEvent} />}
+      {eventDeleted && <Redirect to="/" />}
+      {currentEvent ? (
         <Border>
           <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
             <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
-              {currentEvent?.name}
+              {currentEvent.name}
             </h3>
             <ButtonLight onClick={() => setShowEventLink(true)}>
               Link
@@ -149,9 +152,9 @@ const EventDetail: FC<Props> = () => {
             setCurrentEvent={setCurrentEvent}
           />
         </Border>
-      </>
-    );
-  } else return null;
+      ) : null}
+    </>
+  );
 };
 
 export default EventDetail;

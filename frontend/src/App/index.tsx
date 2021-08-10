@@ -58,7 +58,7 @@ const App: FC = () => {
           }
         })();
     } catch (error) {
-      console.log("error 1");
+      console.log(error);
     }
   }, [user]);
 

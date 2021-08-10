@@ -29,24 +29,15 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
           amount,
         } as Expense);
         try {
-          const eventSnap = await db
+          await db
             .collection("events")
-            .where("code", "==", currentEvent.code)
-            .get();
-          if (eventSnap.empty) {
-            alert("error 404 resource not found");
-          } else {
-            eventSnap.forEach((event) => {
-              event.ref.update({
-                ...currentEvent,
-                expenses: updatedExpenseList,
-              } as Event);
-            });
-          }
+            .doc(currentEvent.code)
+            .update({
+              ...currentEvent,
+              expenses: updatedExpenseList,
+            } as Event);
         } catch (error) {
-          console.log("error 6");
-
-          alert(error.toString());
+          console.log(error);
         }
       }
     }
@@ -59,24 +50,15 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
         (e) => e.id !== expense.id
       );
       try {
-        const eventSnap = await db
+        await db
           .collection("events")
-          .where("code", "==", currentEvent.code)
-          .get();
-        if (eventSnap.empty) {
-          alert("error 404 resource not found");
-        } else {
-          eventSnap.forEach((event) => {
-            event.ref.update({
-              ...currentEvent,
-              expenses: updatedExpenseList,
-            } as Event);
-          });
-        }
+          .doc(currentEvent.code)
+          .update({
+            ...currentEvent,
+            expenses: updatedExpenseList,
+          } as Event);
       } catch (error) {
-        console.log("error 7");
-
-        alert(error.toString());
+        console.log(error);
       }
     }
     buttonRef?.click();
