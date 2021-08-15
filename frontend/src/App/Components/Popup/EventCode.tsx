@@ -24,7 +24,7 @@ const EventCode: FC<Props> = ({
   ) => {
     setCopyEventCode(true);
     navigator.clipboard.writeText(
-      `${window.location}event/${currentEvent?.code}`
+      `${window.location.origin}/event?code=${currentEvent?.code}`
     );
   };
 

@@ -83,10 +83,10 @@ const NewJobPrompt: FC<Props> = ({
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
               placeholder="Event name"
             />
-            {error !== "" && (
-              <span className="p-2 text-red-500 text-xs">{error}</span>
-            )}
           </div>
+          {error !== "" && (
+            <div className="mt-2 mx-2 text-red-500 text-xs">{error}</div>
+          )}
           <button
             type="submit"
             className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"

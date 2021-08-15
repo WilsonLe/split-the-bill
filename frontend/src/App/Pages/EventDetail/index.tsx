@@ -39,6 +39,7 @@ const EventDetail: FC<Props> = () => {
   // fetch event data from eventCode
   useEffect(() => {
     if (eventCode) {
+      console.log(eventCode);
       const unsubscribe = db
         .collection("events")
         .doc(eventCode)
@@ -94,11 +95,6 @@ const EventDetail: FC<Props> = () => {
     // if (user){if (user.uid === db.collection('events'))}
   }, []);
 
-  // check if currentEvent is empty (after event is deleted)
-  useEffect(() => {
-    // TODO: implement this
-  });
-
   const deleteEventHandler = async (currentEvent: Event) => {
     try {
       await db.collection("events").doc(currentEvent.code).delete();
@@ -117,7 +113,7 @@ const EventDetail: FC<Props> = () => {
       {eventDeleted && <Redirect to="/" />}
       {currentEvent ? (
         <Border>
-          <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between">
+          <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between items-center">
             <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
               {currentEvent.name}
             </h3>
@@ -130,6 +126,7 @@ const EventDetail: FC<Props> = () => {
               currentEvent={currentEvent}
               title={"Event Link"}
             />
+            <span className="mx-2 sm:mx-4"></span>
             <ButtonRed onClick={() => setShowConfirmDelete(true)}>
               Delete
             </ButtonRed>
@@ -146,11 +143,18 @@ const EventDetail: FC<Props> = () => {
             members={members}
             expenses={currentEvent?.expenses}
           />
-          <SplitTheBill />
-          <AddExpense
-            currentEvent={currentEvent}
-            setCurrentEvent={setCurrentEvent}
-          />
+
+          <div className="relative my-2">
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 translate-y-1/2">
+              <SplitTheBill />
+            </div>
+            <div className="absolute right-0 top-1/2 transform translate-y-1/4">
+              <AddExpense
+                currentEvent={currentEvent}
+                setCurrentEvent={setCurrentEvent}
+              />
+            </div>
+          </div>
         </Border>
       ) : null}
     </>
