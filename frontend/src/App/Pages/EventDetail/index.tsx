@@ -5,6 +5,7 @@ import { db } from "../../../firebase.config";
 import Border from "../../Components/Border";
 import { ButtonLight, ButtonRed } from "../../Components/Button";
 import ConfirmDelete from "../../Components/Popup/ConfirmDelete";
+import ConfirmLeave from "../../Components/Popup/ConfirmLeave";
 import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
@@ -29,11 +30,14 @@ const EventDetail: FC<Props> = () => {
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
+  const [isCreator, setIsCreator] = useState(false);
   const [isMember, setIsMember] = useState(true);
-  const [checkMember, setCheckMember] = useState(false);
+  const [justLeft, setJustLeft] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showConfirmLeave, setShowConfirmLeave] = useState(false);
   const [eventDeleted, setEventDeleted] = useState(false);
+  const [eventLeft, setEventLeft] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
@@ -79,48 +83,74 @@ const EventDetail: FC<Props> = () => {
     }
   }, [currentEvent]);
 
-  // check if user is in member list
-  useEffect(() => {
-    if (user && currentEvent) {
-      if (!currentEvent.members.includes(user.uid)) {
-        setIsMember(false);
-      } else {
-        setIsMember(true);
-      }
-      setCheckMember(true);
-    }
-  }, [currentEvent?.members]);
-
   // check if user is creator
   useEffect(() => {
-    // if (user){if (user.uid === db.collection('events'))}
-  }, []);
-
-  const deleteEventHandler = async (currentEvent: Event) => {
-    try {
-      await db.collection("events").doc(currentEvent.code).delete();
-      setEventDeleted(true);
-    } catch (error) {
-      console.log(error);
+    if (user && currentEvent) {
+      if (user.uid === currentEvent.creator.uid) setIsCreator(true);
+      else setIsCreator(false);
     }
-  };
+  }, [user, currentEvent]);
+
+  // check if user is member
+  useEffect(() => {
+    if (user && currentEvent) {
+      if (currentEvent.members.includes(user.uid)) setIsMember(true);
+      else setIsMember(false);
+    }
+  }, [user, currentEvent]);
 
   // check auth after 1 sec
   useEffect(() => {
+    // TODO: implement clean up
     (async () => {
       await new Promise((res, rej) => setTimeout(res, 1000));
       if (!user) setAuth(false);
     })();
   }, []);
 
+  const deleteEventHandler = async (currentEvent: Event) => {
+    if (currentEvent) {
+      try {
+        await db.collection("events").doc(currentEvent.code).delete();
+        setEventDeleted(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const leaveEventHandler = async (currentEvent: Event) => {
+    if (user && currentEvent) {
+      const updatedMembers = currentEvent.members.filter(
+        (uid) => uid != user.uid
+      );
+      try {
+        setJustLeft(true);
+        await db
+          .collection("events")
+          .doc(currentEvent.code)
+          .update({
+            ...currentEvent,
+            members: updatedMembers,
+          } as Event);
+        setEventLeft(true);
+      } catch (error) {
+        setJustLeft(false);
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <>
-      {!checkMember && null}
-      {!auth && <Redirect to="/login" />}
+      {!auth && <Redirect to={`/login?code=${eventCode}`} />}
       {!isValidCode && <Redirect to="/notfound" />}
-      {!isMember && <JoinEvent currentEvent={currentEvent} />}
+      {!isMember && !justLeft && currentEvent && (
+        <JoinEvent currentEvent={currentEvent} />
+      )}
       {eventDeleted && <Redirect to="/" />}
-      {currentEvent ? (
+      {eventLeft && <Redirect to="/" />}
+      {currentEvent && (
         <Border>
           <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6 flex flex-row justify-between items-center">
             <h3 className="text-lg w-full leading-6 font-medium text-gray-900">
@@ -136,15 +166,31 @@ const EventDetail: FC<Props> = () => {
               title={"Event Link"}
             />
             <span className="mx-2 sm:mx-4"></span>
-            <ButtonRed onClick={() => setShowConfirmDelete(true)}>
-              Delete
-            </ButtonRed>
-            <ConfirmDelete
-              showConfirmDelete={showConfirmDelete}
-              setShowConfirmDelete={setShowConfirmDelete}
-              currentEvent={currentEvent}
-              deleteEventHandler={deleteEventHandler}
-            />
+            {isCreator ? (
+              <>
+                <ButtonRed onClick={() => setShowConfirmDelete(true)}>
+                  Delete
+                </ButtonRed>
+                <ConfirmDelete
+                  showConfirmDelete={showConfirmDelete}
+                  setShowConfirmDelete={setShowConfirmDelete}
+                  currentEvent={currentEvent}
+                  deleteEventHandler={deleteEventHandler}
+                />
+              </>
+            ) : (
+              <>
+                <ButtonRed onClick={() => setShowConfirmLeave(true)}>
+                  Leave
+                </ButtonRed>
+                <ConfirmLeave
+                  showConfirmLeave={showConfirmLeave}
+                  setShowConfirmLeave={setShowConfirmDelete}
+                  currentEvent={currentEvent}
+                  leaveEventHandler={leaveEventHandler}
+                />
+              </>
+            )}
           </div>
           <MembersList members={members} creator={currentEvent?.creator} />
           <ExpensesList
@@ -165,7 +211,7 @@ const EventDetail: FC<Props> = () => {
             </div>
           </div>
         </Border>
-      ) : null}
+      )}
     </>
   );
 };
