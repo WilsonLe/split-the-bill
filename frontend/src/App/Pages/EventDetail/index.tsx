@@ -44,7 +44,6 @@ const EventDetail: FC<Props> = () => {
   // fetch event data from eventCode
   useEffect(() => {
     if (eventCode) {
-      console.log(eventCode);
       const unsubscribe = db
         .collection("events")
         .doc(eventCode)
@@ -62,6 +61,7 @@ const EventDetail: FC<Props> = () => {
 
   // fetch members data from event data
   useEffect(() => {
+    let isSubscribe = true;
     if (currentEvent) {
       (async () => {
         try {
@@ -75,12 +75,15 @@ const EventDetail: FC<Props> = () => {
               console.log(`unknown user with uid ${userRef.id}`);
             }
           }
-          setMembers(tempMembers);
+          isSubscribe && setMembers(tempMembers);
         } catch (error) {
           console.log(error);
         }
       })();
     }
+    return () => {
+      isSubscribe = false;
+    };
   }, [currentEvent]);
 
   // check if user is creator
@@ -101,11 +104,11 @@ const EventDetail: FC<Props> = () => {
 
   // check auth after 1 sec
   useEffect(() => {
-    // TODO: implement clean up
-    (async () => {
-      await new Promise((res, rej) => setTimeout(res, 1000));
+    const timeout: NodeJS.Timeout = setTimeout(() => {
       if (!user) setAuth(false);
-    })();
+      else setAuth(true);
+    }, 1000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const deleteEventHandler = async (currentEvent: Event) => {
