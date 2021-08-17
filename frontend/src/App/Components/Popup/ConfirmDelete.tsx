@@ -30,13 +30,11 @@ const ConfirmDelete: FC<Props> = ({
           <div className="my-2">
             <p className="text-sm text-red-500">This action cannot be undone</p>
           </div>
-          <div>
-            <div className="inline-block">
-              <ButtonLight onClick={() => setShowConfirmDelete(false)}>
-                Cancel
-              </ButtonLight>
-            </div>
-
+          <div className="flex justify-center">
+            <ButtonLight onClick={() => setShowConfirmDelete(false)}>
+              Cancel
+            </ButtonLight>
+            <span className="w-4"></span>
             <ButtonRed
               onClick={() => {
                 setShowConfirmDelete(false);

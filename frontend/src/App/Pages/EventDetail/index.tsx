@@ -25,6 +25,7 @@ interface Props {}
 
 const EventDetail: FC<Props> = () => {
   const user = useContext(UserContext);
+  const [auth, setAuth] = useState(true);
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
@@ -104,10 +105,18 @@ const EventDetail: FC<Props> = () => {
     }
   };
 
+  // check auth after 1 sec
+  useEffect(() => {
+    (async () => {
+      await new Promise((res, rej) => setTimeout(res, 1000));
+      if (!user) setAuth(false);
+    })();
+  }, []);
+
   return (
     <>
       {!checkMember && null}
-      {!user && <Redirect to="/login" />}
+      {!auth && <Redirect to="/login" />}
       {!isValidCode && <Redirect to="/notfound" />}
       {!isMember && <JoinEvent currentEvent={currentEvent} />}
       {eventDeleted && <Redirect to="/" />}
