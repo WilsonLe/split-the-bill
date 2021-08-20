@@ -202,11 +202,11 @@ const EventDetail: FC<Props> = () => {
             expenses={currentEvent?.expenses}
           />
 
-          <div className="relative my-2">
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 translate-y-1/2">
-              <SplitTheBill />
+          <div className="relative mt-2 mb-10 h-16">
+            <div className="absolute left-1/2 top-0 transform -translate-x-1/2 translate-y-1/2">
+              <SplitTheBill currentEvent={currentEvent} members={members} />
             </div>
-            <div className="absolute right-0 top-1/2 transform translate-y-1/4">
+            <div className="absolute right-0 top-0transform translate-y-1/4">
               <AddExpense
                 currentEvent={currentEvent}
                 setCurrentEvent={setCurrentEvent}
