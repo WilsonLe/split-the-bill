@@ -1,5 +1,5 @@
 import React, { FC, useContext } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import { AiOutlineGoogle } from "react-icons/ai";
 import UserContext from "../../Contexts/UserContext";
 import { firebase } from "../../../firebase.config";
@@ -8,6 +8,8 @@ interface Props {}
 
 const Login: FC<Props> = () => {
   const user = useContext(UserContext);
+  const query = new URLSearchParams(useLocation().search);
+  const eventCode = query.get("code");
 
   const sign_in = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -16,7 +18,8 @@ const Login: FC<Props> = () => {
 
   return (
     <>
-      {user && <Redirect to="/" />}
+      {user && !eventCode && <Redirect to="/" />}
+      {user && eventCode && <Redirect to={`/event?code=${eventCode}`} />}
       <div className="max-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img

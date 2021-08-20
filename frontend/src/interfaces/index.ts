@@ -6,17 +6,25 @@ interface UserInfo {
   displayName: string;
   email: string;
 }
+
 interface UserInfos extends Array<UserInfo> {}
 
 interface Event {
   id: string;
   name: string;
   code: string;
-  members: string[];
-  expenses: Expenses;
   createdAt: firebase.firestore.Timestamp;
-  creator: UserInfo;
+  members: firebase.firestore.QueryDocumentSnapshot;
+  expenses: firebase.firestore.QueryDocumentSnapshot;
 }
+
+interface Events extends Array<Event> {}
+
+interface Member extends UserInfo {
+  role: "creator" | "member";
+}
+
+interface Members extends Array<Member> {}
 
 interface Expense {
   id: string;
@@ -34,6 +42,8 @@ interface DetailExpenses extends Array<DetailExpense> {}
 
 interface Expenses extends Array<Expense> {}
 
+let dummyMember: Member;
+let dummyMembers: Members;
 let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
@@ -44,6 +54,9 @@ let dummyDetailExpenses: DetailExpenses;
 
 export type {
   Event,
+  Events,
+  Member,
+  Members,
   UserInfo,
   UserInfos,
   Expense,
@@ -51,7 +64,10 @@ export type {
   DetailExpense,
   DetailExpenses,
 };
+
 export {
+  dummyMember,
+  dummyMembers,
   dummyEvent,
   dummyUserInfo,
   dummyUserInfos,

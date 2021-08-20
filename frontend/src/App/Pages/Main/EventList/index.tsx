@@ -1,26 +1,13 @@
 import React, { FC } from "react";
-import { firebase } from "../../../../firebase.config";
+import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
 import { Event } from "../../../interfaces";
 
 interface Props {
   eventList: Event[];
 }
 
-const people = [
-  {
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    department: "Optimization",
-
-    email: "jane.cooper@example.com",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-];
-
 const EventList: FC<Props> = ({ eventList }) => {
-  console.log(eventList);
-
   return (
     <div className="flex flex-col">
       <div className="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -54,14 +41,14 @@ const EventList: FC<Props> = ({ eventList }) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {eventList.map((event) => (
-                  <tr key={event.creator.email}>
+                  <tr key={uuidv4()}>
                     <td className="px-6 py-4 w-1/3 whitespace-nowrap hidden md:table-cell">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <img
                             className="h-10 w-10 rounded-full"
                             src={event.creator.photoURL}
-                            alt={`Profile picture of ${event.creator.displayName}`}
+                            alt={`Profile of ${event.creator.displayName}`}
                           />
                         </div>
                         <div className="ml-4">
@@ -93,12 +80,12 @@ const EventList: FC<Props> = ({ eventList }) => {
                     </td> */}
 
                     <td className="px-6 py-4 w-10 whitespace-nowrap text-right text-sm font-medium">
-                      <a
-                        href="#"
+                      <Link
+                        to={`/event?code=${event.code}`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         View
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 ))}

@@ -1,16 +1,18 @@
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { firebase } from "../firebase.config";
+import { db, firebase } from "../firebase.config";
 
-import Event from "./Pages/Event";
+import EventDetail from "./Pages/EventDetail";
 import Login from "./Pages/Login";
 import Main from "./Pages/Main";
 import UserContext from "./Contexts/UserContext";
 import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
+import NotFound from "./Pages/NotFound";
+import { dummyEvent, Event } from "./interfaces";
 
 const pages = [
   {
@@ -27,13 +29,38 @@ const pages = [
   },
   {
     path: "/event",
-    component: <Event />,
+    component: <EventDetail />,
+  },
+  {
+    path: "/notfound",
+    component: <NotFound />,
   },
 ];
 
 const App: FC = () => {
   const [user] = useAuthState(firebase.auth());
-  const [theme, setTheme] = useState("dark");
+  const theme = useContext(ThemeContext);
+
+  // check if user already in db
+  useEffect(() => {
+    try {
+      if (user)
+        (async () => {
+          const userRef = db.collection("users").doc(user?.uid);
+          const userSnap = await userRef.get();
+          if (!userSnap.exists) {
+            userRef.set({
+              uid: user.uid,
+              photoURL: user.photoURL,
+              displayName: user.displayName,
+              email: user.email,
+            });
+          }
+        })();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [user]);
 
   return (
     <>

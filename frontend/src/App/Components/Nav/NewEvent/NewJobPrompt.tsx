@@ -1,22 +1,22 @@
 import React, { FC, useContext, useState } from "react";
-import { firebase } from "../../../../firebase.config";
-import { Event } from "../../../interfaces";
+import { v4 as uuidv4 } from "uuid";
+import { db, firebase } from "../../../../firebase.config";
+import { Event, Expenses } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEventLink: React.Dispatch<React.SetStateAction<boolean>>;
-  setNewEventData: React.Dispatch<React.SetStateAction<Event>>;
+  setCurrentEvent: React.Dispatch<React.SetStateAction<Event>>;
 }
 
 const NewJobPrompt: FC<Props> = ({
   setOpen,
   setShowEventLink,
-  setNewEventData,
+  setCurrentEvent,
 }) => {
   const [eventName, setEventName] = useState("");
   const [error, setError] = useState("");
-
   const user = useContext(UserContext);
 
   const createEvent = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,22 +26,30 @@ const NewJobPrompt: FC<Props> = ({
       setError("Event name cannot be empty");
       return;
     }
-    const create_event = firebase.functions().httpsCallable("create_event");
-    try {
-      const res = await create_event({
-        // do not pass user props, maybe it's in context.
-        // will cause maximum stack call exceed
-        uid: user?.uid,
-        photoURL: user?.photoURL,
-        displayName: user?.displayName,
-        email: user?.email,
-        eventName,
-      });
-      const newEvent = res.data as Event;
-      setNewEventData(newEvent);
-      setShowEventLink(true);
-    } catch (error) {
-      alert(error.toString());
+
+    if (user) {
+      const eventCode = uuidv4();
+      const newEvent = {
+        name: eventName,
+        code: eventCode,
+        createdAt: firebase.firestore.Timestamp.now(),
+        members: [user.uid],
+        expenses: [] as Expenses,
+        creator: {
+          uid: user.uid,
+          photoURL: user.photoURL as string,
+          displayName: user.displayName as string,
+          email: user.email as string,
+        },
+      } as Event;
+
+      try {
+        db.collection("events").doc(eventCode).set(newEvent);
+        setCurrentEvent({ ...newEvent, id: eventCode } as Event);
+        setShowEventLink(true);
+      } catch (error) {
+        console.log(error);
+      }
     }
     setOpen(false);
   };
@@ -75,10 +83,10 @@ const NewJobPrompt: FC<Props> = ({
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
               placeholder="Event name"
             />
-            {error !== "" && (
-              <span className="p-2 text-red-500 text-xs">{error}</span>
-            )}
           </div>
+          {error !== "" && (
+            <div className="mt-2 mx-2 text-red-500 text-xs">{error}</div>
+          )}
           <button
             type="submit"
             className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
