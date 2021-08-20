@@ -1,5 +1,7 @@
 {
   "projects": {
+    "development": "split-the-bill-wilsonle",
+    "production": "split-the-bill-production",
     "default": "split-the-bill-wilsonle"
   }
 }

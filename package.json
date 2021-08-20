@@ -1,0 +1,12 @@
+{
+  "name": "split-the-bill",
+  "version": "1.0.0",
+  "repository": "https://github.com/WilsonLe/split-the-bill",
+  "author": "Wilson <43991506+WilsonLe@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && yarn install && yarn run build",
+    "dev": "cd frontend && yarn start"
+  }
+}
