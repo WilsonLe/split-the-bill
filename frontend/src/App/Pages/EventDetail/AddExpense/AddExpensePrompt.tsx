@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import UserContext from "../../../Contexts/UserContext";
 import { db, firebase } from "../../../../firebase.config";
 import { Event, Expense } from "../../../interfaces";

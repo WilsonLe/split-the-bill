@@ -1,9 +1,8 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import React, { FC, useEffect, useState } from "react";
-import { db } from "../../../firebase.config";
+import React, { FC } from "react";
 import classNames from "../../../utils/classNames";
-import { dummyUserInfos, UserInfo, UserInfos } from "../../interfaces";
+import { UserInfo, UserInfos } from "../../interfaces";
 
 interface Props {
   members: UserInfos;

@@ -5,7 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 import ButtonCircle from "../../../Components/Button/ButtonCircle";
 import { Event } from "../../../interfaces";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import AddExpensePrompt from "./AddExpensePrompt";
 
 interface Props {

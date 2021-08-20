@@ -1,8 +1,8 @@
 import { Dialog } from "@headlessui/react";
-import React, { FC, useRef } from "react";
+import React, { FC } from "react";
 import { BasePopup } from ".";
 import { Event } from "../../interfaces";
-import { ButtonLight, ButtonPrimary, ButtonRed } from "../Button";
+import { ButtonLight, ButtonRed } from "../Button";
 
 interface Props {
   showConfirmLeave: boolean;

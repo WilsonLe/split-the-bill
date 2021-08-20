@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useContext, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Transition } from "@headlessui/react";
 
 import useOnClickOutside from "../../../../utils/useOnClickOutside";

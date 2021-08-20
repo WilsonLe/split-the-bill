@@ -17,7 +17,6 @@ import {
 } from "../../interfaces";
 import AddExpense from "./AddExpense";
 import ExpensesList from "./ExpensesList";
-import ExpenseList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
 import MembersList from "./MembersList";
 import SplitTheBill from "./SplitTheBill";
@@ -109,7 +108,7 @@ const EventDetail: FC<Props> = () => {
       else setAuth(true);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [user]);
 
   const deleteEventHandler = async (currentEvent: Event) => {
     if (currentEvent) {
@@ -125,7 +124,7 @@ const EventDetail: FC<Props> = () => {
   const leaveEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
       const updatedMembers = currentEvent.members.filter(
-        (uid) => uid != user.uid
+        (uid) => uid !== user.uid
       );
       try {
         setJustLeft(true);

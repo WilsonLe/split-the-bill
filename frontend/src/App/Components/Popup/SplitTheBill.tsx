@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 
-import { ButtonLight, ButtonPrimary } from "../Button";
+import { ButtonPrimary } from "../Button";
 import { BasePopup } from ".";
 import { Event, UserInfos } from "../../interfaces";
-import { Member } from "../../../interfaces";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -52,7 +51,7 @@ const SplitTheBillPopup: FC<Props> = ({
       members.forEach((member) => {
         let tempMemberExpense: MemberExpense = {};
         currentEvent.expenses.forEach((expense) => {
-          if (expense.user == member.uid) {
+          if (expense.user === member.uid) {
             tempMemberExpense[expense.description] = expense.amount;
           }
         });
@@ -80,7 +79,7 @@ const SplitTheBillPopup: FC<Props> = ({
       let receivers: ExpenseByMember = {};
       for (const memberName in totalExpenseByMember) {
         const expense = totalExpenseByMember[memberName];
-        if (expense == average) continue;
+        if (expense === average) continue;
         else if (expense > average) receivers[memberName] = expense;
         else payers[memberName] = expense;
       }
@@ -92,7 +91,7 @@ const SplitTheBillPopup: FC<Props> = ({
       let transactions = [];
       for (const r in receivers) {
         for (const p in payers) {
-          if (receivers[r] == payers[p]) {
+          if (receivers[r] === payers[p]) {
             transactions.push({
               receiver: r,
               payer: p,

@@ -1,5 +1,4 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { firebase } from "../../../firebase.config";
 import { Redirect } from "react-router-dom";
 
 import { db } from "../../../firebase.config";

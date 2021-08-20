@@ -12,7 +12,6 @@ import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
 import NotFound from "./Pages/NotFound";
-import { dummyEvent, Event } from "./interfaces";
 
 const pages = [
   {
