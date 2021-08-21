@@ -30,9 +30,9 @@ const developmentConfig = {
   measurementId: "G-ZKVXW3YGHB",
 };
 
-if ((process.env.REACT_APP_DEPLOY_ENV = "production")) {
+if (process.env.REACT_APP_DEPLOY_ENV === "production") {
   firebase.initializeApp(productionConfig);
-} else {
+} else if (process.env.REACT_APP_DEPLOY_ENV === "development") {
   firebase.initializeApp(developmentConfig);
 }
 
