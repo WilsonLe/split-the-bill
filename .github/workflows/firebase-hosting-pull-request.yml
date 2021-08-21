@@ -11,7 +11,6 @@ jobs:
       REACT_APP_DEPLOY_ENV: development
     steps:
       - uses: actions/checkout@v2
-      - run: yarn run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
