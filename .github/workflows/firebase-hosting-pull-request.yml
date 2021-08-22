@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
       - name: Build development
-      - run: "yarn run build:development"
+        run: "yarn run build:development"
         env:
           REACT_APP_AUTH_DOMAIN: ${{secrets.DEV_REACT_APP_AUTH_DOMAIN}}
           REACT_APP_PROJECT_ID: ${{secrets.DEV_REACT_APP_PROJECT_ID}}
@@ -20,7 +20,7 @@ jobs:
           REACT_APP_APP_ID: ${{secrets.DEV_REACT_APP_APP_ID}}
           REACT_APP_MEASUREMENT_ID: ${{secrets.DEV_REACT_APP_MEASUREMENT_ID}}
       - name: Deploy
-      - uses: w9jds/firebase-action@master
+        uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting --project development
         env:
