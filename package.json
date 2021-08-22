@@ -7,9 +7,7 @@
   "private": true,
   "scripts": {
     "dev": "cd frontend && yarn start",
-    "build": "cd frontend && yarn install && yarn run build",
-    "build:development": "env-cmd -f .env.development yarn run build",
-    "build:production": "env-cmd -f .env.production yarn run build"
+    "build": "cd frontend && yarn install && yarn run build"
   },
   "dependencies": {
     "env-cmd": "^10.1.0"
