@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "env-cmd -f ./.env.development.local yarn run dev",
     "dev": "cd frontend && yarn start",
     "build": "cd frontend && yarn install && yarn run build"
   },
