@@ -9,7 +9,7 @@
       }
     ],
     "cleanUrls": true,
-    "predeploy": ["yarn run build"]
+    "trailingSlash": false
   },
   "functions": {
     "predeploy": [
