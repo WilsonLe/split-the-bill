@@ -30,6 +30,14 @@ interface DetailExpense extends Omit<Expense, "user"> {
   user: UserInfo;
 }
 
+interface Version {
+  createdAt: firebase.firestore.Timestamp;
+  note: string;
+  version: string;
+}
+
+interface Versions extends Array<Version> {}
+
 interface DetailExpenses extends Array<DetailExpense> {}
 
 interface Expenses extends Array<Expense> {}
@@ -43,6 +51,8 @@ let dummyDetailExpense: DetailExpense;
 let dummyDetailExpenses: DetailExpenses;
 
 export type {
+  Version,
+  Versions,
   Event,
   UserInfo,
   UserInfos,

@@ -12,6 +12,7 @@ import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
 import NotFound from "./Pages/NotFound";
+import VersionsList from "./Pages/VersionsList";
 
 const pages = [
   {
@@ -29,6 +30,10 @@ const pages = [
   {
     path: "/event",
     component: <EventDetail />,
+  },
+  {
+    path: "/versions",
+    component: <VersionsList />,
   },
   {
     path: "/notfound",
