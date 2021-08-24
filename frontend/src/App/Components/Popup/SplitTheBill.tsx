@@ -114,7 +114,6 @@ const SplitTheBillPopup: FC<Props> = ({
           }
         }
       }
-      console.log(transactions);
       setTransactions(transactions);
     }
   }, [currentEvent, members]);
