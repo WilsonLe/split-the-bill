@@ -1,5 +1,5 @@
 import { CalendarIcon } from "@heroicons/react/outline";
-import React, { FC, useEffect, useState, version } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { db } from "../../../firebase.config";
 import Border from "../../Components/Border";
 import { Versions, Version } from "../../interfaces";
@@ -32,7 +32,7 @@ const VersionsList: FC<Props> = () => {
           </h3>
         </div>
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul role="list" className="divide-y divide-gray-200">
+          <ul className="divide-y divide-gray-200">
             {versions.map((version) => (
               <li key={version.version}>
                 <div className="block hover:bg-gray-50">

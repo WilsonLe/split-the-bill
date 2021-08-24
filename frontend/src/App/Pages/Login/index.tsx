@@ -3,7 +3,6 @@ import { Redirect, useLocation } from "react-router-dom";
 import { AiOutlineGoogle } from "react-icons/ai";
 import UserContext from "../../Contexts/UserContext";
 import { firebase } from "../../../firebase.config";
-import Border from "../../Components/Border";
 
 interface Props {}
 
