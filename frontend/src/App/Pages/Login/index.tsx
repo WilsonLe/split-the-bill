@@ -65,7 +65,6 @@ const Login: FC<Props> = () => {
           </div>
         </div>
       </div>
-      )
     </>
   );
 };

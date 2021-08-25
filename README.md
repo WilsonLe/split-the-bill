@@ -2,7 +2,7 @@
 
 ## Demo link:
 
-Access my site at [split-the-bill-production.web.app](split-the-bill-production.web.app)
+Access my site at [split-the-bill-production.web.app](https://split-the-bill-production.web.app)
 
 ## Table of Content:
 

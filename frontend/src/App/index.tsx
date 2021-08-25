@@ -12,6 +12,7 @@ import ThemeContext from "./Contexts/ThemeContext";
 import Nav from "./Components/Nav";
 import Logout from "./Pages/Logout";
 import NotFound from "./Pages/NotFound";
+import VersionsList from "./Pages/VersionsList";
 
 const pages = [
   {
@@ -31,6 +32,10 @@ const pages = [
     component: <EventDetail />,
   },
   {
+    path: "/versions",
+    component: <VersionsList />,
+  },
+  {
     path: "/notfound",
     component: <NotFound />,
   },
@@ -45,14 +50,13 @@ const App: FC = () => {
     try {
       if (user)
         (async () => {
-          const userRef = db.collection("users").doc(user?.uid);
+          const userRef = db.collection("users").doc(user.uid);
           const userSnap = await userRef.get();
           if (!userSnap.exists) {
             userRef.set({
               uid: user.uid,
               photoURL: user.photoURL,
               displayName: user.displayName,
-              email: user.email,
             });
           }
         })();
