@@ -4,7 +4,6 @@ interface UserInfo {
   uid: string;
   photoURL: string;
   displayName: string;
-  email: string;
 }
 interface UserInfos extends Array<UserInfo> {}
 

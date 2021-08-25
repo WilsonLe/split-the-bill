@@ -55,9 +55,6 @@ const EventList: FC<Props> = ({ eventList }) => {
                           <div className="text-sm font-medium text-gray-900">
                             {event.creator.displayName}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {event.creator.email}
-                          </div>
                         </div>
                       </div>
                     </td>

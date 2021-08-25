@@ -39,7 +39,6 @@ const NewJobPrompt: FC<Props> = ({
           uid: user.uid,
           photoURL: user.photoURL as string,
           displayName: user.displayName as string,
-          email: user.email as string,
         },
       } as Event;
 
