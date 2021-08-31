@@ -10,8 +10,10 @@ node_modules
 
 # production
 build
+lib
 
-# misc
+# secrets
+serviceAccount.*
 .DS_Store
 .env.local
 .env.development.local
