@@ -45,11 +45,11 @@ const App: FC = () => {
   const [user] = useAuthState(firebase.auth());
   const theme = useContext(ThemeContext);
 
-  // check if user already in db
+  // check if user already in db, if not, add to db
   useEffect(() => {
-    try {
-      if (user)
-        (async () => {
+    if (user)
+      (async () => {
+        try {
           const userRef = db.collection("users").doc(user.uid);
           const userSnap = await userRef.get();
           if (!userSnap.exists) {
@@ -59,10 +59,10 @@ const App: FC = () => {
               displayName: user.displayName,
             });
           }
-        })();
-    } catch (error) {
-      console.log(error);
-    }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
   }, [user]);
 
   return (

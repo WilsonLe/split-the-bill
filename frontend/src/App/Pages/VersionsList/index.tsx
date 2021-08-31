@@ -12,10 +12,14 @@ const VersionsList: FC<Props> = () => {
   useEffect(() => {
     let isSubscribe = true;
     (async () => {
-      const versionsRef = await db.collection("versions").limit(5).get();
-      const versions = versionsRef.docs.map((ver) => ver.data() as Version);
-      if (isSubscribe) {
-        setVersions(versions);
+      try {
+        const versionsRef = await db.collection("versions").limit(5).get();
+        const versions = versionsRef.docs.map((ver) => ver.data() as Version);
+        if (isSubscribe) {
+          setVersions(versions);
+        }
+      } catch (error) {
+        console.log(error);
       }
     })();
     return () => {

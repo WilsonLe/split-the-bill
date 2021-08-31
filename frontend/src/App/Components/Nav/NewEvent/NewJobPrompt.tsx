@@ -43,7 +43,7 @@ const NewJobPrompt: FC<Props> = ({
       } as Event;
 
       try {
-        db.collection("events").doc(eventCode).set(newEvent);
+        await db.collection("events").doc(eventCode).set(newEvent);
         setCurrentEvent({ ...newEvent, id: eventCode } as Event);
         setShowEventLink(true);
       } catch (error) {

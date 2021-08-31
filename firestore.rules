@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  function incomingData(){
+    return request.resource.data;
+  }
+
+  function existingData(){
+    return resource.data;
+  }
+
+  function isLoggedIn(){
+    return request.auth != null;
+  }
+
+	function isSelf(){
+  	return request.auth.uid == existingData().uid;
+  }
+
+  function isMember() {
+    return request.auth.uid in existingData().members;
+  }
+
+  function isCreator() {
+    return request.auth.uid == existingData().creator.uid;
+  }
+
+  function updatedMembers(){
+    return incomingData().diff(existingData()).changedKeys().hasOnly(['members']);
+  }
+
+  function addedMemberIsThemself(){
+    return (request.auth.uid in incomingData().members)
+    && !(request.auth.uid in existingData().members);
+  }
+
+  function removedMemberIsThemself(){
+    return !(request.auth.uid in incomingData().members) 
+    && (request.auth.uid in existingData().members);
+  }
+
+  function updatedExpenses(){
+    return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
+  }
+
+  function updatedReadableMember(){
+    return incomingData().diff(existingData()).changedKeys().hasOnly(['readableMember']);
+  }
+
+	function eventTypeCheck(){
+  	return incomingData().code is string
+    && incomingData().createdAt is timestamp
+    && incomingData().name is string
+    && incomingData().creator is map
+    && incomingData().members is list
+  }
+  
+  function userTypeCheck(){
+  	return incomingData().displayName is string
+    && incomingData().photoURL is string
+    && incomingData().uid is string
+    && incomingData().readableMember is list
+  }
+  
+  function userReadable(database){
+  	return get(/databases/$(database)/documents/users/$(request.auth.uid)) != null
+    && existingData().uid in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readableMember
+  }
+  
+  match /databases/{database}/documents {
+    match /events/{event} {
+      allow read:
+      	if isLoggedIn();
+      allow create:
+        if isLoggedIn() 
+        && eventTypeCheck();
+      allow delete:
+        if isLoggedIn() 
+        && isCreator();
+      allow update:
+        if isLoggedIn() 
+        && isMember() 
+        && (updatedMembers() 
+        && (addedMemberIsThemself() || removedMemberIsThemself()))
+        || (updatedExpenses());
+    }
+    match /users/{user} {
+      allow create:
+        if isLoggedIn() && userTypeCheck();
+      allow update:
+      	if isLoggedIn() && isSelf() && updatedReadableMember();
+			allow read:
+      	if isLoggedIn() 
+        && ((isSelf() && userReadable(database)) 
+        || resource == null);
+      allow delete:
+      	if false;
+    }
+    match /versions/{version} {
+      allow read;
+      allow write: if false;
+    }
+  }
+}
+
+
