@@ -7,10 +7,15 @@
   "private": true,
   "scripts": {
     "start": "env-cmd -f ./.env.development.local yarn run dev",
-    "dev": "cd frontend && yarn start",
-    "build": "cd frontend && yarn install && yarn run build"
+    "dev": "yarn --cwd frontend start",
+    "build": "yarn --cwd frontend install && yarn --cwd frontend run build"
   },
   "dependencies": {
     "env-cmd": "^10.1.0"
+  },
+  "prettier": {
+    "singleQuote": false,
+    "tabWidth": 2,
+    "useTabs": false
   }
 }

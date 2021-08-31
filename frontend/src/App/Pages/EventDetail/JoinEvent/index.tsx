@@ -15,9 +15,9 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
   const [showJoinEvent, setShowJoinEvent] = useState(true);
 
   const joinEventHandler = async (currentEvent: Event) => {
-    try {
-      if (user && currentEvent) {
-        const updatedMembers = [...currentEvent.members, user.uid];
+    if (user && currentEvent) {
+      const updatedMembers = [...currentEvent.members, user.uid];
+      try {
         await db
           .collection("events")
           .doc(currentEvent.code)
@@ -25,9 +25,9 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
             ...currentEvent,
             members: updatedMembers,
           } as Event);
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 

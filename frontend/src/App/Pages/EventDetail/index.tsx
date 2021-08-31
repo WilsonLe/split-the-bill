@@ -63,21 +63,23 @@ const EventDetail: FC<Props> = () => {
     let isSubscribe = true;
     if (currentEvent) {
       (async () => {
-        try {
-          const tempMembers: UserInfos = [];
-          for (let i = 0; i < currentEvent.members.length; i++) {
-            const userRef = db.collection("users").doc(currentEvent.members[i]);
-            const userSnap = await userRef.get();
-            if (userSnap.exists) {
-              tempMembers.push(userSnap.data() as UserInfo);
+        const tempMembers: UserInfos = [];
+        for (let i = 0; i < currentEvent.members.length; i++) {
+          try {
+            const user = await db
+              .collection("users")
+              .doc(currentEvent.members[i])
+              .get();
+            if (user.exists) {
+              tempMembers.push(user.data() as UserInfo);
             } else {
-              console.log(`unknown user with uid ${userRef.id}`);
+              console.log(`unknown user with uid ${user.id}`);
             }
+          } catch (error) {
+            console.log(error);
           }
-          isSubscribe && setMembers(tempMembers);
-        } catch (error) {
-          console.log(error);
         }
+        isSubscribe && setMembers(tempMembers);
       })();
     }
     return () => {
@@ -126,8 +128,8 @@ const EventDetail: FC<Props> = () => {
       const updatedMembers = currentEvent.members.filter(
         (uid) => uid !== user.uid
       );
+      setJustLeft(true);
       try {
-        setJustLeft(true);
         await db
           .collection("events")
           .doc(currentEvent.code)
