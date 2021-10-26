@@ -11,7 +11,8 @@ interface Event {
   id: string;
   name: string;
   code: string;
-  members: string[];
+  members: UserInfos;
+  membersUid: string[];
   expenses: Expenses;
   createdAt: firebase.firestore.Timestamp;
   creator: UserInfo;

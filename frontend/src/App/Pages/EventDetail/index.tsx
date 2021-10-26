@@ -8,13 +8,7 @@ import ConfirmDelete from "../../Components/Popup/ConfirmDelete";
 import ConfirmLeave from "../../Components/Popup/ConfirmLeave";
 import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
-import {
-  dummyEvent,
-  dummyUserInfos,
-  Event,
-  UserInfo,
-  UserInfos,
-} from "../../interfaces";
+import { dummyEvent, dummyUserInfos, Event, UserInfos } from "../../interfaces";
 import AddExpense from "./AddExpense";
 import ExpensesList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
@@ -48,7 +42,12 @@ const EventDetail: FC<Props> = () => {
         .doc(eventCode)
         .onSnapshot(
           (doc) => {
-            setCurrentEvent(doc.data() as Event);
+            if (doc.exists) {
+              const event = doc.data() as Event;
+              console.log(event);
+              setCurrentEvent(event);
+              setMembers(event.members);
+            }
           },
           (error) => {
             console.log(error);
@@ -57,35 +56,6 @@ const EventDetail: FC<Props> = () => {
       return () => unsubscribe();
     } else setIsValidCode(false);
   }, [eventCode]);
-
-  // fetch members data from event data
-  useEffect(() => {
-    let isSubscribe = true;
-    if (currentEvent) {
-      (async () => {
-        const tempMembers: UserInfos = [];
-        for (let i = 0; i < currentEvent.members.length; i++) {
-          try {
-            const user = await db
-              .collection("users")
-              .doc(currentEvent.members[i])
-              .get();
-            if (user.exists) {
-              tempMembers.push(user.data() as UserInfo);
-            } else {
-              console.log(`unknown user with uid ${user.id}`);
-            }
-          } catch (error) {
-            console.log(error);
-          }
-        }
-        isSubscribe && setMembers(tempMembers);
-      })();
-    }
-    return () => {
-      isSubscribe = false;
-    };
-  }, [currentEvent]);
 
   // check if user is creator
   useEffect(() => {
@@ -98,7 +68,7 @@ const EventDetail: FC<Props> = () => {
   // check if user is member
   useEffect(() => {
     if (user && currentEvent) {
-      if (currentEvent.members.includes(user.uid)) setIsMember(true);
+      if (currentEvent.membersUid.includes(user.uid)) setIsMember(true);
       else setIsMember(false);
     }
   }, [user, currentEvent]);
@@ -126,6 +96,9 @@ const EventDetail: FC<Props> = () => {
   const leaveEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
       const updatedMembers = currentEvent.members.filter(
+        (member) => member.uid !== user.uid
+      );
+      const updatedMembersUid = currentEvent.membersUid.filter(
         (uid) => uid !== user.uid
       );
       setJustLeft(true);
@@ -136,6 +109,7 @@ const EventDetail: FC<Props> = () => {
           .update({
             ...currentEvent,
             members: updatedMembers,
+            membersUid: updatedMembersUid,
           } as Event);
         setEventLeft(true);
       } catch (error) {

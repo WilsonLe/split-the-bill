@@ -20,7 +20,7 @@ const Main: FC<Props> = () => {
     if (user) {
       const unsubscribe = db
         .collection("events")
-        .where("members", "array-contains", user.uid)
+        .where("membersUid", "array-contains", user.uid)
         .onSnapshot(
           (querySnapshot) => {
             const creatorEvents: Event[] = [];

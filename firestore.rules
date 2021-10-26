@@ -12,14 +12,6 @@ service cloud.firestore {
     return request.auth != null;
   }
 
-	function isSelf(){
-  	return request.auth.uid == existingData().uid;
-  }
-
-  function isMember() {
-    return request.auth.uid in existingData().members;
-  }
-
   function isCreator() {
     return request.auth.uid == existingData().creator.uid;
   }
@@ -29,22 +21,28 @@ service cloud.firestore {
   }
 
   function addedMemberIsThemself(){
-    return (request.auth.uid in incomingData().members)
-    && !(request.auth.uid in existingData().members);
+    return (request.auth.uid in incomingData().membersUid)
+    && !(request.auth.uid in existingData().membersUid);
   }
 
   function removedMemberIsThemself(){
-    return !(request.auth.uid in incomingData().members) 
-    && (request.auth.uid in existingData().members);
+    return !(request.auth.uid in incomingData().membersUid) 
+    && (request.auth.uid in existingData().membersUid);
   }
 
-  function updatedExpenses(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
-  }
+  // function updatedExpenses(){
+  //   return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
+  // }
 
-  function updatedReadableMember(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['readableMember']);
-  }
+  // function updatedExpenseIsThemself(){
+  //   return (request.auth.uid in incomingData().membersUid)
+  //   && !(request.auth.uid in existingData().membersUid);
+  // }
+
+  // function removedExpenseIsThemself(){
+  //   return !(request.auth.uid in incomingData().membersUid) 
+  //   && (request.auth.uid in existingData().membersUid);
+  // }
 
 	function eventTypeCheck(){
   	return incomingData().code is string
@@ -52,18 +50,8 @@ service cloud.firestore {
     && incomingData().name is string
     && incomingData().creator is map
     && incomingData().members is list
-  }
-  
-  function userTypeCheck(){
-  	return incomingData().displayName is string
-    && incomingData().photoURL is string
-    && incomingData().uid is string
-    && incomingData().readableMember is list
-  }
-  
-  function userReadable(database){
-  	return get(/databases/$(database)/documents/users/$(request.auth.uid)) != null
-    && existingData().uid in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readableMember
+    && incomingData().membersUid is list
+    && incomingData().expenses is list
   }
   
   match /databases/{database}/documents {
@@ -78,22 +66,11 @@ service cloud.firestore {
         && isCreator();
       allow update:
         if isLoggedIn() 
-        && isMember() 
         && (updatedMembers() 
         && (addedMemberIsThemself() || removedMemberIsThemself()))
-        || (updatedExpenses());
-    }
-    match /users/{user} {
-      allow create:
-        if isLoggedIn() && userTypeCheck();
-      allow update:
-      	if isLoggedIn() && isSelf() && updatedReadableMember();
-			allow read:
-      	if isLoggedIn() 
-        && ((isSelf() && userReadable(database)) 
-        || resource == null);
-      allow delete:
-      	if false;
+        // || ((isCreator() && updatedExpenses())
+        // || (updatedExpenses()))
+        // && (updatedExpenseIsThemself() || removedExpenseIsThemself())));
     }
     match /versions/{version} {
       allow read;

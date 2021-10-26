@@ -1,7 +1,7 @@
 import React, { FC, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { db, firebase } from "../../../../firebase.config";
-import { Event, Expenses } from "../../../interfaces";
+import { Event, Expenses, UserInfo, UserInfos } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 
 interface Props {
@@ -33,7 +33,14 @@ const NewJobPrompt: FC<Props> = ({
         name: eventName,
         code: eventCode,
         createdAt: firebase.firestore.Timestamp.now(),
-        members: [user.uid],
+        members: [
+          {
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          } as UserInfo,
+        ] as UserInfos,
+        membersUid: [user.uid],
         expenses: [] as Expenses,
         creator: {
           uid: user.uid,

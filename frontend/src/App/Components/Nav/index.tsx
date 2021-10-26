@@ -32,8 +32,8 @@ const navigation: any[] = [
 ];
 
 const userNavigation: any[] = [
-  { name: "Your Profile", href: "/user" },
-  { name: "Settings", href: "/settings" },
+  // { name: "Your Profile", href: "/user" },
+  // { name: "Settings", href: "/settings" },
   { name: "Sign out", href: "/logout" },
 ];
 

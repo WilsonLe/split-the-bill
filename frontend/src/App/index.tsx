@@ -1,8 +1,8 @@
-import React, { FC, useContext, useEffect } from "react";
+import React, { FC, useContext } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { db, firebase } from "../firebase.config";
+import { auth } from "../firebase.config";
 
 import EventDetail from "./Pages/EventDetail";
 import Login from "./Pages/Login";
@@ -42,29 +42,8 @@ const pages = [
 ];
 
 const App: FC = () => {
-  const [user] = useAuthState(firebase.auth());
+  const [user] = useAuthState(auth);
   const theme = useContext(ThemeContext);
-
-  // check if user already in db, if not, add to db
-  useEffect(() => {
-    if (user)
-      (async () => {
-        try {
-          const userRef = db.collection("users").doc(user.uid);
-          const userSnap = await userRef.get();
-          if (!userSnap.exists) {
-            userRef.set({
-              uid: user.uid,
-              photoURL: user.photoURL,
-              displayName: user.displayName,
-            });
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-  }, [user]);
-
   return (
     <>
       <UserContext.Provider value={user}>

@@ -66,7 +66,7 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
 
   return (
     <>
-      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 w-80">
+      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 w-80">
         <div className="flex justify-between items-center">
           <h3 className="text-lg leading-6 font-medium text-gray-900 inline-block">
             Edit expense

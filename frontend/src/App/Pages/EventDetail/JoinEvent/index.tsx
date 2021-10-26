@@ -4,7 +4,7 @@ import { db } from "../../../../firebase.config";
 import { ButtonPrimary } from "../../../Components/Button";
 import { BasePopup } from "../../../Components/Popup";
 import UserContext from "../../../Contexts/UserContext";
-import { Event } from "../../../interfaces";
+import { Event, UserInfo, UserInfos } from "../../../interfaces";
 
 interface Props {
   currentEvent: Event;
@@ -16,13 +16,21 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
 
   const joinEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
-      const updatedMembers = [...currentEvent.members, user.uid];
+      const updatedMembersUid = [...currentEvent.membersUid, user.uid];
+      const updatedMembers = [
+        ...currentEvent.members,
+        {
+          uid: user.uid,
+          photoURL: user.photoURL,
+          displayName: user.displayName,
+        } as UserInfo,
+      ] as UserInfos;
       try {
         await db
           .collection("events")
           .doc(currentEvent.code)
           .update({
-            ...currentEvent,
+            membersUid: updatedMembersUid,
             members: updatedMembers,
           } as Event);
       } catch (error) {

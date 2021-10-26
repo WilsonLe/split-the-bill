@@ -20,9 +20,14 @@ firebase.initializeApp({
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 });
 
-// firebase.functions().useEmulator("localhost", 5001);
-
 const db = firebase.firestore();
 const auth = firebase.auth();
+const fn = firebase.functions();
 
-export { firebase, auth, db };
+if (process.env.NODE_ENV === "development") {
+  db.useEmulator("localhost", 8080);
+  auth.useEmulator("http://localhost:9099");
+  fn.useEmulator("localhost", 5001);
+}
+
+export { firebase, auth, db, fn };
