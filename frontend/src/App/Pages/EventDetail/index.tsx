@@ -1,4 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
+import { deleteDoc, updateDoc, doc, onSnapshot } from "firebase/firestore";
 import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
@@ -37,22 +38,19 @@ const EventDetail: FC<Props> = () => {
   // fetch event data from eventCode
   useEffect(() => {
     if (eventCode) {
-      const unsubscribe = db
-        .collection("events")
-        .doc(eventCode)
-        .onSnapshot(
-          (doc) => {
-            if (doc.exists) {
-              const event = doc.data() as Event;
-              console.log(event);
-              setCurrentEvent(event);
-              setMembers(event.members);
-            }
-          },
-          (error) => {
-            console.log(error);
+      const unsubscribe = onSnapshot(
+        doc(db, "events", eventCode),
+        (doc) => {
+          if (doc.exists()) {
+            const event = doc.data() as Event;
+            setCurrentEvent(event);
+            setMembers(event.members);
           }
-        );
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
       return () => unsubscribe();
     } else setIsValidCode(false);
   }, [eventCode]);
@@ -85,7 +83,7 @@ const EventDetail: FC<Props> = () => {
   const deleteEventHandler = async (currentEvent: Event) => {
     if (currentEvent) {
       try {
-        await db.collection("events").doc(currentEvent.code).delete();
+        await deleteDoc(doc(db, "events", currentEvent.code));
         setEventDeleted(true);
       } catch (error) {
         console.log(error);
@@ -103,14 +101,10 @@ const EventDetail: FC<Props> = () => {
       );
       setJustLeft(true);
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update({
-            ...currentEvent,
-            members: updatedMembers,
-            membersUid: updatedMembersUid,
-          } as Event);
+        await updateDoc(doc(db, "events", currentEvent.code), {
+          members: updatedMembers,
+          membersUid: updatedMembersUid,
+        });
         setEventLeft(true);
       } catch (error) {
         setJustLeft(false);

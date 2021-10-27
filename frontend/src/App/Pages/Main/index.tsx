@@ -8,6 +8,7 @@ import UserContext from "../../Contexts/UserContext";
 import EventList from "./EventList";
 
 import { Event } from "../../interfaces";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 interface Props {}
 
@@ -18,21 +19,22 @@ const Main: FC<Props> = () => {
   // fetch all event that has current user a member
   useEffect(() => {
     if (user) {
-      const unsubscribe = db
-        .collection("events")
-        .where("membersUid", "array-contains", user.uid)
-        .onSnapshot(
-          (querySnapshot) => {
-            const creatorEvents: Event[] = [];
-            querySnapshot.forEach((doc) => {
-              creatorEvents.push(doc.data() as Event);
-            });
-            setEventList(creatorEvents);
+      const q = query(
+        collection(db, "events"),
+        where("membersUid", "array-contains", user.uid)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const creatorEvents: Event[] = [];
+        querySnapshot.forEach(
+          (doc) => {
+            creatorEvents.push(doc.data() as Event);
           },
-          (error) => {
+          (error: any) => {
             console.log(error);
           }
         );
+        setEventList(creatorEvents);
+      });
       return () => unsubscribe();
     }
   }, [user]);

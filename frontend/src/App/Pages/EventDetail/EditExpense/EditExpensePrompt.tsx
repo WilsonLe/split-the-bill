@@ -3,6 +3,7 @@ import { ButtonPrimary, ButtonRed } from "../../../Components/Button";
 import { db } from "../../../../firebase.config";
 import UserContext from "../../../Contexts/UserContext";
 import { DetailExpense, Event, Expense } from "../../../interfaces";
+import { doc, updateDoc } from "firebase/firestore";
 
 interface Props {
   currentEvent: Event;
@@ -29,13 +30,10 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
           amount,
         } as Expense);
         try {
-          await db
-            .collection("events")
-            .doc(currentEvent.code)
-            .update({
-              ...currentEvent,
-              expenses: updatedExpenseList,
-            } as Event);
+          await updateDoc(doc(db, "events", currentEvent.code), {
+            ...currentEvent,
+            expenses: updatedExpenseList,
+          });
         } catch (error) {
           console.log(error);
         }
@@ -50,13 +48,10 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
         (e) => e.id !== expense.id
       );
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update({
-            ...currentEvent,
-            expenses: updatedExpenseList,
-          } as Event);
+        await updateDoc(doc(db, "events", currentEvent.code), {
+          ...currentEvent,
+          expenses: updatedExpenseList,
+        });
       } catch (error) {
         console.log(error);
       }

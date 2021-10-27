@@ -17,7 +17,7 @@ service cloud.firestore {
   }
 
   function updatedMembers(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['members']);
+    return incomingData().diff(existingData()).changedKeys().hasOnly(['members', 'membersUid']);
   }
 
   function addedMemberIsThemself(){
@@ -30,19 +30,18 @@ service cloud.firestore {
     && (request.auth.uid in existingData().membersUid);
   }
 
-  // function updatedExpenses(){
-  //   return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
-  // }
+  function updatedExpenses(){
+    return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
+  }
 
-  // function updatedExpenseIsThemself(){
-  //   return (request.auth.uid in incomingData().membersUid)
-  //   && !(request.auth.uid in existingData().membersUid);
-  // }
+  function updatedExpenseIsThemself(){
+    return (request.auth.uid in existingData().expenses.toSet().difference(incomingData().expenses.toSet()))
+  }
 
-  // function removedExpenseIsThemself(){
-  //   return !(request.auth.uid in incomingData().membersUid) 
-  //   && (request.auth.uid in existingData().membersUid);
-  // }
+  function removedExpenseIsThemself(){
+    return !(request.auth.uid in incomingData().membersUid) 
+    && (request.auth.uid in existingData().membersUid);
+  }
 
 	function eventTypeCheck(){
   	return incomingData().code is string
@@ -65,12 +64,12 @@ service cloud.firestore {
         if isLoggedIn() 
         && isCreator();
       allow update:
-        if isLoggedIn() 
-        && (updatedMembers() 
+        if isLoggedIn()
+        && ((updatedMembers() 
         && (addedMemberIsThemself() || removedMemberIsThemself()))
-        // || ((isCreator() && updatedExpenses())
-        // || (updatedExpenses()))
-        // && (updatedExpenseIsThemself() || removedExpenseIsThemself())));
+        || ((isCreator() && updatedExpenses())
+        || ((updatedExpenses())
+        && (updatedExpenseIsThemself() || removedExpenseIsThemself()))));
     }
     match /versions/{version} {
       allow read;
@@ -78,5 +77,6 @@ service cloud.firestore {
     }
   }
 }
+
 
 

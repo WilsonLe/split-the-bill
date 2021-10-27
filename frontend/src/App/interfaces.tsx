@@ -1,4 +1,4 @@
-import { firebase } from "../firebase.config";
+import { Timestamp } from "firebase/firestore";
 
 interface UserInfo {
   uid: string;
@@ -14,7 +14,7 @@ interface Event {
   members: UserInfos;
   membersUid: string[];
   expenses: Expenses;
-  createdAt: firebase.firestore.Timestamp;
+  createdAt: Timestamp;
   creator: UserInfo;
 }
 
@@ -23,7 +23,7 @@ interface Expense {
   user: string;
   amount: number;
   description: string;
-  spentAt: firebase.firestore.Timestamp;
+  spentAt: Timestamp;
 }
 
 interface DetailExpense extends Omit<Expense, "user"> {
@@ -31,7 +31,7 @@ interface DetailExpense extends Omit<Expense, "user"> {
 }
 
 interface Version {
-  createdAt: firebase.firestore.Timestamp;
+  createdAt: Timestamp;
   note: string;
   version: string;
 }

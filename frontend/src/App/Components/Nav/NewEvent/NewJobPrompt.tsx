@@ -1,9 +1,9 @@
 import React, { FC, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { db, firebase } from "../../../../firebase.config";
+import { db } from "../../../../firebase.config";
 import { Event, Expenses, UserInfo, UserInfos } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
-
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setShowEventLink: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +32,7 @@ const NewJobPrompt: FC<Props> = ({
       const newEvent = {
         name: eventName,
         code: eventCode,
-        createdAt: firebase.firestore.Timestamp.now(),
+        createdAt: Timestamp.now(),
         members: [
           {
             uid: user.uid,
@@ -50,7 +50,7 @@ const NewJobPrompt: FC<Props> = ({
       } as Event;
 
       try {
-        await db.collection("events").doc(eventCode).set(newEvent);
+        await setDoc(doc(db, "events", eventCode), newEvent);
         setCurrentEvent({ ...newEvent, id: eventCode } as Event);
         setShowEventLink(true);
       } catch (error) {

@@ -1,5 +1,6 @@
-import { Dialog } from "@headlessui/react";
 import React, { FC, useContext, useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { Dialog } from "@headlessui/react";
 import { db } from "../../../../firebase.config";
 import { ButtonPrimary } from "../../../Components/Button";
 import { BasePopup } from "../../../Components/Popup";
@@ -26,13 +27,10 @@ const JoinEvent: FC<Props> = ({ currentEvent }) => {
         } as UserInfo,
       ] as UserInfos;
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update({
-            membersUid: updatedMembersUid,
-            members: updatedMembers,
-          } as Event);
+        await updateDoc(doc(db, "events", currentEvent.code), {
+          membersUid: updatedMembersUid,
+          members: updatedMembers,
+        });
       } catch (error) {
         console.log(error);
       }

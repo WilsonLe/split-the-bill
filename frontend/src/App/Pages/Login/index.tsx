@@ -2,7 +2,8 @@ import React, { FC, useContext } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { AiOutlineGoogle } from "react-icons/ai";
 import UserContext from "../../Contexts/UserContext";
-import { firebase } from "../../../firebase.config";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../../firebase.config";
 
 interface Props {}
 
@@ -12,8 +13,8 @@ const Login: FC<Props> = () => {
   const eventCode = query.get("code");
 
   const sign_in = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider);
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider);
   };
 
   return (
