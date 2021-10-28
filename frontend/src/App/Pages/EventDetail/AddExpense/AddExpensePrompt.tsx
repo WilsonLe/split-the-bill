@@ -4,7 +4,7 @@ import { db } from "../../../../firebase.config";
 import { Event, Expense } from "../../../interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { ButtonPrimary } from "../../../Components/Button";
-import { Timestamp, updateDoc, doc } from "firebase/firestore";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
 
 interface Props {
   currentEvent: Event;
@@ -23,25 +23,21 @@ const AddExpensePrompt: FC<Props> = ({
   const addExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (user && currentEvent) {
-      const updatedExpenses = [
-        ...currentEvent.expenses,
-        {
-          id: uuidv4(),
-          user: user.uid,
-          amount: amount as number,
-          description: note,
-          spentAt: Timestamp.now(),
-        } as Expense,
-      ];
+      const updatedExpenses = [...currentEvent.expenses];
       const updatedEvent = {
         ...currentEvent,
         expenses: updatedExpenses,
       };
       setCurrentEvent(updatedEvent);
+      const id = uuidv4();
       try {
-        await updateDoc(doc(db, "events", currentEvent.code), {
-          expenses: updatedExpenses,
-        });
+        await setDoc(doc(db, "events", currentEvent.code, "expenses", id), {
+          id,
+          user: user.uid,
+          amount: amount as number,
+          description: note,
+          spentAt: Timestamp.now(),
+        } as Expense);
       } catch (error) {
         console.log(error);
       }

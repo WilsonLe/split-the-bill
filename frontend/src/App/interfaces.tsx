@@ -11,12 +11,14 @@ interface Event {
   id: string;
   name: string;
   code: string;
+  expenses: Expenses;
   members: UserInfos;
   membersUid: string[];
-  expenses: Expenses;
   createdAt: Timestamp;
   creator: UserInfo;
 }
+
+export interface EventWithoutExpense extends Omit<Event, "expenses"> {}
 
 interface Expense {
   id: string;
@@ -46,6 +48,7 @@ let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
 let dummyExpense: Expense;
+let dummyEventWithoutExpense: EventWithoutExpense;
 let dummyExpenses: Expenses;
 let dummyDetailExpense: DetailExpense;
 let dummyDetailExpenses: DetailExpenses;
@@ -63,6 +66,7 @@ export type {
 };
 export {
   dummyEvent,
+  dummyEventWithoutExpense,
   dummyUserInfo,
   dummyUserInfos,
   dummyExpense,

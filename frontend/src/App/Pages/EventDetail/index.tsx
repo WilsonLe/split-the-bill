@@ -1,5 +1,11 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import { deleteDoc, updateDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  deleteDoc,
+  updateDoc,
+  doc,
+  onSnapshot,
+  collection,
+} from "firebase/firestore";
 import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
@@ -9,7 +15,14 @@ import ConfirmDelete from "../../Components/Popup/ConfirmDelete";
 import ConfirmLeave from "../../Components/Popup/ConfirmLeave";
 import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
-import { dummyEvent, dummyUserInfos, Event, UserInfos } from "../../interfaces";
+import {
+  dummyEvent,
+  dummyUserInfos,
+  Event,
+  EventWithoutExpense,
+  Expenses,
+  UserInfos,
+} from "../../interfaces";
 import AddExpense from "./AddExpense";
 import ExpensesList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
@@ -22,6 +35,9 @@ const EventDetail: FC<Props> = () => {
   const user = useContext(UserContext);
   const [auth, setAuth] = useState(true);
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
+  const [currentEventWithoutExpense, setCurrentEventWithoutExpense] =
+    useState<EventWithoutExpense>();
+  const [expensesData, setExpensesData] = useState<Expenses>();
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
@@ -35,15 +51,16 @@ const EventDetail: FC<Props> = () => {
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
-  // fetch event data from eventCode
+  // fetch event without expense data from eventCode
   useEffect(() => {
     if (eventCode) {
       const unsubscribe = onSnapshot(
         doc(db, "events", eventCode),
         (doc) => {
           if (doc.exists()) {
-            const event = doc.data() as Event;
-            setCurrentEvent(event);
+            const event = doc.data();
+            console.log(event);
+            setCurrentEventWithoutExpense(event as EventWithoutExpense);
             setMembers(event.members);
           }
         },
@@ -55,6 +72,35 @@ const EventDetail: FC<Props> = () => {
     } else setIsValidCode(false);
   }, [eventCode]);
 
+  // fetch event expense data from eventCode
+  useEffect(() => {
+    if (eventCode) {
+      const unsubscribe = onSnapshot(
+        collection(db, "events", eventCode, "expenses"),
+        (querySnapshot) => {
+          const expenses = querySnapshot.docs.map((expense) => expense.data());
+          setExpensesData(expenses as Expenses);
+        }
+      );
+      return () => unsubscribe();
+    } else setIsValidCode(false);
+  }, [eventCode]);
+
+  useEffect(() => {
+    if (expensesData && currentEventWithoutExpense) {
+      console.log("expenses data");
+      console.log(expensesData);
+      console.log("current event without expenses");
+      console.log(currentEventWithoutExpense);
+      const currentEvent = {
+        ...currentEventWithoutExpense,
+        expenses: expensesData,
+      } as Event;
+      console.log("current event");
+      console.log(currentEvent);
+      setCurrentEvent(currentEvent);
+    }
+  }, [expensesData, currentEventWithoutExpense]);
   // check if user is creator
   useEffect(() => {
     if (user && currentEvent) {

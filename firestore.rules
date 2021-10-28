@@ -50,7 +50,6 @@ service cloud.firestore {
     && incomingData().creator is map
     && incomingData().members is list
     && incomingData().membersUid is list
-    && incomingData().expenses is list
   }
   
   match /databases/{database}/documents {
@@ -70,6 +69,9 @@ service cloud.firestore {
         || ((isCreator() && updatedExpenses())
         || ((updatedExpenses())
         && (updatedExpenseIsThemself() || removedExpenseIsThemself()))));
+    }
+    match /events/{event}/expenses/{expense}{
+      allow read, write: if true;
     }
     match /versions/{version} {
       allow read;

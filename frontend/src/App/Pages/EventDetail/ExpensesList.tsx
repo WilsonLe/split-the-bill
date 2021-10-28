@@ -14,6 +14,8 @@ interface Props {
 
 const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
   const [detailExpenses, setDetailExpenses] = useState<DetailExpenses>([]);
+
+  // set detail expense (expense with user info)
   useEffect(() => {
     if (members && expenses) {
       const sortedExpense = expenses.sort(

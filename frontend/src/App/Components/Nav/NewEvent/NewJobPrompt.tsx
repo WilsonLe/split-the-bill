@@ -1,7 +1,13 @@
 import React, { FC, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../../../../firebase.config";
-import { Event, Expenses, UserInfo, UserInfos } from "../../../interfaces";
+import {
+  Event,
+  EventWithoutExpense,
+  Expenses,
+  UserInfo,
+  UserInfos,
+} from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 interface Props {
@@ -41,17 +47,20 @@ const NewJobPrompt: FC<Props> = ({
           } as UserInfo,
         ] as UserInfos,
         membersUid: [user.uid],
-        expenses: [] as Expenses,
         creator: {
           uid: user.uid,
           photoURL: user.photoURL as string,
           displayName: user.displayName as string,
         },
-      } as Event;
+      } as EventWithoutExpense;
 
       try {
         await setDoc(doc(db, "events", eventCode), newEvent);
-        setCurrentEvent({ ...newEvent, id: eventCode } as Event);
+        setCurrentEvent({
+          ...newEvent,
+          id: eventCode,
+          expenses: [] as Expenses,
+        } as Event);
         setShowEventLink(true);
       } catch (error) {
         console.log(error);

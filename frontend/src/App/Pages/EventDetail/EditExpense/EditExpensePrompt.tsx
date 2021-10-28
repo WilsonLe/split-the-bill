@@ -1,9 +1,8 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useState } from "react";
 import { ButtonPrimary, ButtonRed } from "../../../Components/Button";
 import { db } from "../../../../firebase.config";
-import UserContext from "../../../Contexts/UserContext";
-import { DetailExpense, Event, Expense } from "../../../interfaces";
-import { doc, updateDoc } from "firebase/firestore";
+import { DetailExpense, Event } from "../../../interfaces";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 interface Props {
   currentEvent: Event;
@@ -12,7 +11,6 @@ interface Props {
 }
 
 const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
-  const user = useContext(UserContext);
   const [note, setNote] = useState(expense?.description);
   const [amount, setAmount] = useState<number | string>(expense?.amount);
 
@@ -20,20 +18,14 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
     e.preventDefault();
     if (currentEvent) {
       if (note !== expense.description || amount !== expense.amount) {
-        const updatedExpenseList = currentEvent.expenses.filter(
-          (e) => e.id !== expense.id
-        );
-        updatedExpenseList.push({
-          ...expense,
-          user: user?.uid,
-          description: note,
-          amount,
-        } as Expense);
         try {
-          await updateDoc(doc(db, "events", currentEvent.code), {
-            ...currentEvent,
-            expenses: updatedExpenseList,
-          });
+          await updateDoc(
+            doc(db, "events", currentEvent.code, "expenses", expense.id),
+            {
+              description: note,
+              amount,
+            }
+          );
         } catch (error) {
           console.log(error);
         }
@@ -44,14 +36,10 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
 
   const deleteExpenseHandler = async () => {
     if (currentEvent) {
-      const updatedExpenseList = currentEvent.expenses.filter(
-        (e) => e.id !== expense.id
-      );
       try {
-        await updateDoc(doc(db, "events", currentEvent.code), {
-          ...currentEvent,
-          expenses: updatedExpenseList,
-        });
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "expenses", expense.id)
+        );
       } catch (error) {
         console.log(error);
       }
