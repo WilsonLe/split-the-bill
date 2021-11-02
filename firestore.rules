@@ -29,7 +29,7 @@ service cloud.firestore {
   }
 
   function isTheUser(database, user){
-    return request.auth.uid == get(/databases/$(database)/documents/users/$(user)).data.uid;
+    return get(/databases/$(database)/documents/users/$(user)).data.uid == request.auth.uid;
   }
 
   function userAlreadyJoined(database, user, event){
@@ -129,7 +129,7 @@ service cloud.firestore {
       allow delete:
         if isLoggedIn()
         && userAlreadyJoined(database, user, event)
-        && isTheUser(database, user)
+        && isTheUser(database, user);
     }
 
     match /versions/{version} {

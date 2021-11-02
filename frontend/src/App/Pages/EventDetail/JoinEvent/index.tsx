@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from "react";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Dialog } from "@headlessui/react";
 import { db } from "../../../../firebase.config";
 import { ButtonPrimary } from "../../../Components/Button";
@@ -19,6 +19,24 @@ const JoinEvent: FC<Props> = ({ currentEvent, setJustJoin }) => {
   const joinEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
       try {
+        // check if user in user collection
+        // if user in collection, do nothing
+        // else, create one
+        const userSnap = await getDoc(doc(db, "users", user.uid));
+        if (!userSnap.exists()) {
+          await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          } as UserInfo);
+        }
+
+        // update user's joined events
+        await setDoc(doc(db, "users", user.uid, "events", currentEvent.code), {
+          code: currentEvent.code,
+        });
+
+        // update joined events members
         await setDoc(
           doc(db, "events", currentEvent.code, "members", user.uid),
           {
@@ -27,9 +45,7 @@ const JoinEvent: FC<Props> = ({ currentEvent, setJustJoin }) => {
             photoURL: user.photoURL,
           } as UserInfo
         );
-        await setDoc(doc(db, "users", user.uid, "events", currentEvent.code), {
-          code: currentEvent.code,
-        });
+
         setJustJoin(true);
       } catch (error) {
         console.log(error);

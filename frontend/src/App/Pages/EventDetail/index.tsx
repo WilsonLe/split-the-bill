@@ -168,7 +168,7 @@ const EventDetail: FC<Props> = () => {
         );
         setEventLeft(true);
       } catch (error) {
-        setJustLeft(false);
+        setJustLeft(true);
         console.log(error);
       }
     }

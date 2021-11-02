@@ -18,7 +18,6 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { FirebaseError } from "@firebase/util";
 
 interface Props {}
 
@@ -43,11 +42,7 @@ const Main: FC<Props> = () => {
             } as UserInfo);
           }
         } catch (error) {
-          if (error instanceof FirebaseError) {
-            console.log(error.code);
-          } else {
-            console.log(error);
-          }
+          console.log(error);
         }
       }
     })();
