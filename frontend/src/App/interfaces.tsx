@@ -18,7 +18,8 @@ interface Event {
   creator: UserInfo;
 }
 
-export interface EventWithoutExpense extends Omit<Event, "expenses"> {}
+export interface EventWithoutMemberExpense
+  extends Omit<Event, "expenses" | "members" | "membersUid"> {}
 
 interface Expense {
   id: string;
@@ -48,7 +49,7 @@ let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
 let dummyExpense: Expense;
-let dummyEventWithoutExpense: EventWithoutExpense;
+let dummyEventWithoutExpense: EventWithoutMemberExpense;
 let dummyExpenses: Expenses;
 let dummyDetailExpense: DetailExpense;
 let dummyDetailExpenses: DetailExpenses;

@@ -13,9 +13,29 @@ interface Props {
 const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
   const [note, setNote] = useState(expense?.description);
   const [amount, setAmount] = useState<number | string>(expense?.amount);
+  const [noteError, setNoteError] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
 
+  const editAmountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmountError("");
+    setAmount(e.target.value);
+  };
+
+  const editNoteHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoteError("");
+    setNote(e.target.value);
+  };
   const editExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const amountNumber = Number(amount);
+    if (amountNumber < 0) {
+      setAmountError("Amount must be positive");
+      return;
+    }
+    if (note === "") {
+      setNoteError("Item note not specified");
+      return;
+    }
     if (currentEvent) {
       if (note !== expense.description || amount !== expense.amount) {
         try {
@@ -23,7 +43,7 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
             doc(db, "events", currentEvent.code, "expenses", expense.id),
             {
               description: note,
-              amount,
+              amount: amountNumber,
             }
           );
         } catch (error) {
@@ -71,7 +91,7 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
                 type="text"
                 name="expense note"
                 value={note}
-                onChange={(e) => setNote(e.target.value)}
+                onChange={editNoteHandler}
                 autoComplete="off"
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
                 placeholder="Note"
@@ -85,13 +105,23 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
                 type="number"
                 name="expense amount"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={editAmountHandler}
                 autoComplete="off"
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
                 placeholder="Amount"
               />
             </div>
           </div>
+          {noteError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {noteError}
+            </span>
+          )}
+          {amountError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {amountError}
+            </span>
+          )}
           <div>
             <ButtonPrimary type="submit" className="w-full justify-center">
               Save changes

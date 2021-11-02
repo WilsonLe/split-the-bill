@@ -19,9 +19,21 @@ const AddExpensePrompt: FC<Props> = ({
 }) => {
   const user = useContext(UserContext);
   const [note, setNote] = useState("");
-  const [amount, setAmount] = useState<string | number>("");
+  const [amount, setAmount] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
+  const [noteError, setNoteError] = useState<string>("");
+
   const addExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const amountNumber = Number(amount);
+    if (amountNumber < 0) {
+      setAmountError("Amount must be positive");
+      return;
+    }
+    if (note === "") {
+      setNoteError("Item note not specified");
+      return;
+    }
     if (user && currentEvent) {
       const updatedExpenses = [...currentEvent.expenses];
       const updatedEvent = {
@@ -34,7 +46,7 @@ const AddExpensePrompt: FC<Props> = ({
         await setDoc(doc(db, "events", currentEvent.code, "expenses", id), {
           id,
           user: user.uid,
-          amount: amount as number,
+          amount: amountNumber,
           description: note,
           spentAt: Timestamp.now(),
         } as Expense);
@@ -46,10 +58,12 @@ const AddExpensePrompt: FC<Props> = ({
   };
 
   const noteChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoteError("");
     setNote(e.target.value);
   };
 
   const amountChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmountError("");
     setAmount(e.target.value);
   };
 
@@ -93,6 +107,16 @@ const AddExpensePrompt: FC<Props> = ({
               />
             </div>
           </div>
+          {noteError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {noteError}
+            </span>
+          )}
+          {amountError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {amountError}
+            </span>
+          )}
           <ButtonPrimary type="submit" className="w-full justify-center">
             Add
           </ButtonPrimary>

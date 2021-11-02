@@ -1,36 +1,36 @@
 import React, { FC, useContext, useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { Dialog } from "@headlessui/react";
 import { db } from "../../../../firebase.config";
 import { ButtonPrimary } from "../../../Components/Button";
 import { BasePopup } from "../../../Components/Popup";
 import UserContext from "../../../Contexts/UserContext";
-import { Event, UserInfo, UserInfos } from "../../../interfaces";
+import { Event, UserInfo } from "../../../interfaces";
 
 interface Props {
   currentEvent: Event;
+  setJustJoin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const JoinEvent: FC<Props> = ({ currentEvent }) => {
+const JoinEvent: FC<Props> = ({ currentEvent, setJustJoin }) => {
   const user = useContext(UserContext);
   const [showJoinEvent, setShowJoinEvent] = useState(true);
 
   const joinEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
-      const updatedMembersUid = [...currentEvent.membersUid, user.uid];
-      const updatedMembers = [
-        ...currentEvent.members,
-        {
-          uid: user.uid,
-          photoURL: user.photoURL,
-          displayName: user.displayName,
-        } as UserInfo,
-      ] as UserInfos;
       try {
-        await updateDoc(doc(db, "events", currentEvent.code), {
-          membersUid: updatedMembersUid,
-          members: updatedMembers,
+        await setDoc(
+          doc(db, "events", currentEvent.code, "members", user.uid),
+          {
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          } as UserInfo
+        );
+        await setDoc(doc(db, "users", user.uid, "events", currentEvent.code), {
+          code: currentEvent.code,
         });
+        setJustJoin(true);
       } catch (error) {
         console.log(error);
       }

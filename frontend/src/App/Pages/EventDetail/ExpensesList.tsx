@@ -17,7 +17,7 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
 
   // set detail expense (expense with user info)
   useEffect(() => {
-    if (members && expenses) {
+    if (members.length > 0 && expenses.length > 0) {
       const sortedExpense = expenses.sort(
         (a, b) => b.spentAt.toMillis() - a.spentAt.toMillis()
       );

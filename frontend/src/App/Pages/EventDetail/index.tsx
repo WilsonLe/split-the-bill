@@ -1,11 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
-import {
-  deleteDoc,
-  updateDoc,
-  doc,
-  onSnapshot,
-  collection,
-} from "firebase/firestore";
+import { deleteDoc, doc, onSnapshot, collection } from "firebase/firestore";
 import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
@@ -19,8 +13,9 @@ import {
   dummyEvent,
   dummyUserInfos,
   Event,
-  EventWithoutExpense,
+  EventWithoutMemberExpense,
   Expenses,
+  UserInfo,
   UserInfos,
 } from "../../interfaces";
 import AddExpense from "./AddExpense";
@@ -36,13 +31,15 @@ const EventDetail: FC<Props> = () => {
   const [auth, setAuth] = useState(true);
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
   const [currentEventWithoutExpense, setCurrentEventWithoutExpense] =
-    useState<EventWithoutExpense>();
+    useState<EventWithoutMemberExpense>();
   const [expensesData, setExpensesData] = useState<Expenses>();
+  const [membersData, setMembersData] = useState<UserInfos>();
   const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
   const [isMember, setIsMember] = useState(true);
   const [justLeft, setJustLeft] = useState(false);
+  const [justJoin, setJustJoin] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
@@ -51,7 +48,7 @@ const EventDetail: FC<Props> = () => {
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
-  // fetch event without expense data from eventCode
+  // fetch event without expense, members data from eventCode
   useEffect(() => {
     if (eventCode) {
       const unsubscribe = onSnapshot(
@@ -59,8 +56,7 @@ const EventDetail: FC<Props> = () => {
         (doc) => {
           if (doc.exists()) {
             const event = doc.data();
-            console.log(event);
-            setCurrentEventWithoutExpense(event as EventWithoutExpense);
+            setCurrentEventWithoutExpense(event as EventWithoutMemberExpense);
             setMembers(event.members);
           }
         },
@@ -80,27 +76,47 @@ const EventDetail: FC<Props> = () => {
         (querySnapshot) => {
           const expenses = querySnapshot.docs.map((expense) => expense.data());
           setExpensesData(expenses as Expenses);
+        },
+        (error) => {
+          setExpensesData([] as Expenses);
         }
       );
       return () => unsubscribe();
     } else setIsValidCode(false);
-  }, [eventCode]);
+  }, [eventCode, justJoin]);
 
+  // fetch event member data from eventCode
   useEffect(() => {
-    if (expensesData && currentEventWithoutExpense) {
-      console.log("expenses data");
-      console.log(expensesData);
-      console.log("current event without expenses");
-      console.log(currentEventWithoutExpense);
+    if (eventCode) {
+      const unsubscribe = onSnapshot(
+        collection(db, "events", eventCode, "members"),
+        (querySnapshot) => {
+          const members = querySnapshot.docs.map(
+            (member) => member.data() as UserInfo
+          );
+          setMembersData(members as UserInfos);
+        },
+        (error) => {
+          setMembersData([] as UserInfos);
+        }
+      );
+      return () => unsubscribe();
+    } else setIsValidCode(false);
+  }, [eventCode, justJoin]);
+
+  // merge expense data, member data to currentEvent
+  useEffect(() => {
+    if (expensesData && membersData && currentEventWithoutExpense) {
       const currentEvent = {
         ...currentEventWithoutExpense,
         expenses: expensesData,
+        members: membersData,
+        membersUid: membersData.map((member) => member.uid),
       } as Event;
-      console.log("current event");
-      console.log(currentEvent);
       setCurrentEvent(currentEvent);
     }
-  }, [expensesData, currentEventWithoutExpense]);
+  }, [expensesData, membersData, currentEventWithoutExpense]);
+
   // check if user is creator
   useEffect(() => {
     if (user && currentEvent) {
@@ -127,9 +143,12 @@ const EventDetail: FC<Props> = () => {
   }, [user]);
 
   const deleteEventHandler = async (currentEvent: Event) => {
-    if (currentEvent) {
+    if (user && currentEvent) {
       try {
         await deleteDoc(doc(db, "events", currentEvent.code));
+        await deleteDoc(
+          doc(db, "users", user.uid, "events", currentEvent.code)
+        );
         setEventDeleted(true);
       } catch (error) {
         console.log(error);
@@ -139,18 +158,14 @@ const EventDetail: FC<Props> = () => {
 
   const leaveEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
-      const updatedMembers = currentEvent.members.filter(
-        (member) => member.uid !== user.uid
-      );
-      const updatedMembersUid = currentEvent.membersUid.filter(
-        (uid) => uid !== user.uid
-      );
       setJustLeft(true);
       try {
-        await updateDoc(doc(db, "events", currentEvent.code), {
-          members: updatedMembers,
-          membersUid: updatedMembersUid,
-        });
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "members", user.uid)
+        );
+        await deleteDoc(
+          doc(db, "users", user.uid, "events", currentEvent.code)
+        );
         setEventLeft(true);
       } catch (error) {
         setJustLeft(false);
@@ -164,7 +179,7 @@ const EventDetail: FC<Props> = () => {
       {!auth && <Redirect to={`/login?code=${eventCode}`} />}
       {!isValidCode && <Redirect to="/notfound" />}
       {!isMember && !justLeft && currentEvent && (
-        <JoinEvent currentEvent={currentEvent} />
+        <JoinEvent currentEvent={currentEvent} setJustJoin={setJustJoin} />
       )}
       {eventDeleted && <Redirect to="/" />}
       {eventLeft && <Redirect to="/" />}
@@ -210,11 +225,14 @@ const EventDetail: FC<Props> = () => {
               </>
             )}
           </div>
-          <MembersList members={members} creator={currentEvent?.creator} />
+          <MembersList
+            members={currentEvent.members}
+            creator={currentEvent.creator}
+          />
           <ExpensesList
             currentEvent={currentEvent}
-            members={members}
-            expenses={currentEvent?.expenses}
+            members={currentEvent.members}
+            expenses={currentEvent.expenses}
           />
 
           <div className="relative mt-2 mb-10 h-16">

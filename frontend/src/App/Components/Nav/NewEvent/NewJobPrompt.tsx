@@ -3,10 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../../../../firebase.config";
 import {
   Event,
-  EventWithoutExpense,
-  Expenses,
+  EventWithoutMemberExpense,
   UserInfo,
-  UserInfos,
 } from "../../../interfaces";
 import UserContext from "../../../Contexts/UserContext";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
@@ -39,27 +37,25 @@ const NewJobPrompt: FC<Props> = ({
         name: eventName,
         code: eventCode,
         createdAt: Timestamp.now(),
-        members: [
-          {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          } as UserInfo,
-        ] as UserInfos,
-        membersUid: [user.uid],
         creator: {
           uid: user.uid,
           photoURL: user.photoURL as string,
           displayName: user.displayName as string,
         },
-      } as EventWithoutExpense;
-
+      } as EventWithoutMemberExpense;
       try {
         await setDoc(doc(db, "events", eventCode), newEvent);
+        await setDoc(doc(db, "events", eventCode, "members", user.uid), {
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        } as UserInfo);
+        await setDoc(doc(db, "users", user.uid, "events", eventCode), {
+          code: eventCode,
+        });
         setCurrentEvent({
           ...newEvent,
           id: eventCode,
-          expenses: [] as Expenses,
         } as Event);
         setShowEventLink(true);
       } catch (error) {
