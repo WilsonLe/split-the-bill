@@ -6,6 +6,8 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - production
+env:
+  FIREBASE_TOKEN: "${{secrets.FIREBASE_TOKEN}}"
 
 jobs:
   build_and_deploy:
@@ -23,8 +25,4 @@ jobs:
       - name: Running test
         run: "yarn test:ci"
       - name: Deploy
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy
-        env:
-          FIREBASE_TOKEN: "${{secrets.FIREBASE_TOKEN}}"
+        run: "firebase deploy"

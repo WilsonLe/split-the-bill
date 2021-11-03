@@ -4,6 +4,9 @@
 name: Deploy to Development Firebase Hosting on PR
 "on": pull_request
 
+env:
+  FIREBASE_TOKEN: "${{secrets.FIREBASE_TOKEN}}"
+
 jobs:
   development_build_and_preview:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
