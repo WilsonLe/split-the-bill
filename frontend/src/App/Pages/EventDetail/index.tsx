@@ -77,7 +77,7 @@ const EventDetail: FC<Props> = () => {
           const expenses = querySnapshot.docs.map((expense) => expense.data());
           setExpensesData(expenses as Expenses);
         },
-        (error) => {
+        () => {
           setExpensesData([] as Expenses);
         }
       );
@@ -96,7 +96,7 @@ const EventDetail: FC<Props> = () => {
           );
           setMembersData(members as UserInfos);
         },
-        (error) => {
+        () => {
           setMembersData([] as UserInfos);
         }
       );

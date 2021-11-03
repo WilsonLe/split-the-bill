@@ -7,15 +7,6 @@ name: Deploy to Firebase Hosting on merge
     branches:
       - production
 
-env:
-  REACT_APP_API_KEY: "${{secrets.PROD_REACT_APP_API_KEY}}"
-  REACT_APP_AUTH_DOMAIN: "${{secrets.PROD_REACT_APP_AUTH_DOMAIN}}"
-  REACT_APP_PROJECT_ID: "${{secrets.PROD_REACT_APP_PROJECT_ID}}"
-  REACT_APP_STORAGE_BUCKET: "${{secrets.PROD_REACT_APP_STORAGE_BUCKET}}"
-  REACT_APP_MESSAGING_SENDER_ID: "${{secrets.PROD_REACT_APP_MESSAGING_SENDER_ID}}"
-  REACT_APP_APP_ID: "${{secrets.PROD_REACT_APP_APP_ID}}"
-  REACT_APP_MEASUREMENT_ID: "${{secrets.PROD_REACT_APP_MEASUREMENT_ID}}"
-
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -26,9 +17,11 @@ jobs:
         run: "yarn install"
       - name: Build development
         run: "yarn run build"
+      - name: Running test
+        run: "yarn test"
       - name: Deploy
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting --project development
+          args: deploy
         env:
           FIREBASE_TOKEN: "${{secrets.FIREBASE_TOKEN}}"

@@ -24,6 +24,7 @@ import Border from "../Border";
 
 interface Props {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const navigation: any[] = [
   // { name: "", href: "", current: false },
   // { name: "Team", href: "#", current: false },
@@ -31,6 +32,7 @@ const navigation: any[] = [
   // { name: "Calendar", href: "#", current: false },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userNavigation: any[] = [
   // { name: "Your Profile", href: "/user" },
   // { name: "Settings", href: "/settings" },

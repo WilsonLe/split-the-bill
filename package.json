@@ -6,16 +6,25 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f ./.env.development.local yarn run dev",
-    "dev": "yarn --cwd frontend start",
-    "build": "yarn --cwd frontend install && yarn --cwd frontend run build"
+    "start": "concurrently \"yarn start:frontend\" \"yarn start:functions\"",
+    "start:frontend": "yarn --cwd frontend start",
+    "start:functions": "yarn --cwd functions start",
+    "install": "yarn install:frontend && yarn install:functions",
+    "install:frontend": "yarn --cwd frontend install",
+    "install:functions": "yarn --cwd functions install",
+    "build": "yarn build:frontend && yarn build:functions",
+    "build:frontend": "yarn --cwd frontend build",
+    "build:functions": "yarn --cwd functions build",
+    "lint": "yarn --cwd frontend lint && yarn --cwd functions lint",
+    "format": "yarn --cwd frontend format && yarn --cwd functions format"
   },
   "dependencies": {
-    "env-cmd": "^10.1.0"
+    "concurrently": "^6.3.0"
   },
   "prettier": {
-    "singleQuote": false,
+    "trailingComma": "es5",
     "tabWidth": 2,
-    "useTabs": false
+    "semi": true,
+    "singleQuote": false
   }
 }

@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import { db } from "../firebase.config";
+import { db } from "./firebase.config";
 
 exports.removeOldEvent = functions.pubsub
   .schedule("0 0 * * *")
