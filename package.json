@@ -18,8 +18,7 @@
     "build:functions": "yarn --cwd functions build",
     "lint": "yarn --cwd frontend lint && yarn --cwd functions lint",
     "format": "yarn --cwd frontend format && yarn --cwd functions format",
-    "test": "yarn --cwd test start",
-    "test:ci": "firebase emulators:exec \"yarn test\""
+    "test": "firebase emulators:exec \"yarn --cwd test start\""
   },
   "dependencies": {
     "concurrently": "^6.3.0"
