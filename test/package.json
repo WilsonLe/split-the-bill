@@ -1,0 +1,18 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "end to end test",
+  "main": "dist/index.js",
+  "author": "Wilson Le",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "tsc && node ./dist/index.js"
+  },
+  "dependencies": {
+    "puppeteer": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^5.4.4"
+  }
+}

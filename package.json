@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "concurrently \"yarn start:frontend\" \"yarn start:functions\"",
+    "start": "concurrently -n \"\" \"yarn start:frontend\" \"yarn start:functions\"",
     "start:frontend": "yarn --cwd frontend start",
     "start:functions": "yarn --cwd functions start",
     "install": "yarn install:frontend && yarn install:functions",
@@ -16,7 +16,9 @@
     "build:frontend": "yarn --cwd frontend build",
     "build:functions": "yarn --cwd functions build",
     "lint": "yarn --cwd frontend lint && yarn --cwd functions lint",
-    "format": "yarn --cwd frontend format && yarn --cwd functions format"
+    "format": "yarn --cwd frontend format && yarn --cwd functions format",
+    "test": "yarn --cwd test start",
+    "test:ci": "firebase emulators:exec \"yarn test\""
   },
   "dependencies": {
     "concurrently": "^6.3.0"

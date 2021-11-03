@@ -1,1 +1,1 @@
-{ "prettier.configPath": "package.json" }
+{ "prettier.configPath": "package.json", "editor.tabSize": 2 }

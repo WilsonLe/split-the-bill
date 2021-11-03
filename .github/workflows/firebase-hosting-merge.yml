@@ -13,12 +13,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install CI dependencies
-        run: "yarn install"
+      - name: Install Dependencies
+        run: |
+          sudo yarn global add firebase-tools
+          sudo apt-get install xvfb
+          yarn install
       - name: Build development
         run: "yarn run build"
       - name: Running test
-        run: "yarn test"
+        run: "yarn test:ci"
       - name: Deploy
         uses: w9jds/firebase-action@master
         with:

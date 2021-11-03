@@ -12,7 +12,7 @@
     "trailingSlash": false
   },
   "functions": {
-    "predeploy": [],
+    "predeploy": ["yarn lint", "yarn format", "yarn build"],
     "source": "functions"
   },
   "emulators": {
