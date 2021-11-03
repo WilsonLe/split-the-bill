@@ -10,6 +10,8 @@
     "start": "jest"
   },
   "dependencies": {
+    "jest": "^27.3.1",
+    "jest-puppeteer": "^6.0.0",
     "puppeteer": "^11.0.0"
   },
   "devDependencies": {
@@ -23,7 +25,6 @@
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "babel-jest": "^27.3.1",
-    "eslint": "^8.1.0",
-    "jest-puppeteer": "^6.0.0"
+    "eslint": "^8.1.0"
   }
 }
