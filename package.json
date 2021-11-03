@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "concurrently -n \"\" \"yarn start:frontend\" \"yarn start:functions\"",
+    "start": "concurrently -n \"APP,SV\" -c \"black.bgGreen.bold,black.bgBlue.bold\" \"yarn start:frontend\" \"yarn start:functions\"",
     "start:frontend": "yarn --cwd frontend start",
     "start:functions": "yarn --cwd functions start",
     "install": "yarn install:frontend && yarn install:functions && yarn install:test",

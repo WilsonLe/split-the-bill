@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 
 import Wrapper from "./Wrapper";
 
@@ -21,6 +21,7 @@ import MobileUserInfo from "./MobileUserInfo";
 import MobileUserPic from "./MobileUserPic";
 import MobileUserNameEmail from "./MobileUserNameEmail";
 import Border from "../Border";
+import UserContext from "../../Contexts/UserContext";
 
 interface Props {}
 
@@ -40,6 +41,7 @@ const userNavigation: any[] = [
 ];
 
 const Nav: FC<Props> = () => {
+  const user = useContext(UserContext);
   return (
     <>
       <Wrapper>
@@ -52,16 +54,18 @@ const Nav: FC<Props> = () => {
                   <Logo />
                   <Navigation navigation={navigation} />
                 </LeftContent>
-                <RightContent>
-                  <NewEvent />
-                  <Profile>
-                    <Bell />
-                    <UserNavigation
-                      open={open}
-                      userNavigation={userNavigation}
-                    />
-                  </Profile>
-                </RightContent>
+                {user && (
+                  <RightContent>
+                    <NewEvent />
+                    <Profile>
+                      <Bell />
+                      <UserNavigation
+                        open={open}
+                        userNavigation={userNavigation}
+                      />
+                    </Profile>
+                  </RightContent>
+                )}
               </Content>
             </Border>
 
