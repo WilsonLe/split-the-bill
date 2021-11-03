@@ -4,13 +4,13 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 
 const app = initializeApp({
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+  apiKey: "AIzaSyC6kDthry3jyCTVT5fTAmmoNWNiY5P6-wM",
+  authDomain: "split-the-bill-wilsonle.firebaseapp.com",
+  projectId: "split-the-bill-wilsonle",
+  storageBucket: "split-the-bill-wilsonle.appspot.com",
+  messagingSenderId: "1013787776558",
+  appId: "1:1013787776558:web:ae5e16e6b10a560c50f1bf",
+  measurementId: "G-SB5YFTFKJX",
 });
 
 const db = getFirestore(app);

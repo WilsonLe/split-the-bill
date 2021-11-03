@@ -1,6 +1,8 @@
-import * as functions from 'firebase-functions';
-import { helloWorld } from './Handlers';
+import * as functions from "firebase-functions";
 
-export const hello_world = functions.https.onCall((data, context) =>
-	helloWorld(data, context)
-);
+exports.removeOldEvent = functions.pubsub
+  .schedule("0 0 * * *")
+  .timeZone("America/New_York")
+  .onRun((context) => {
+    console.log("runs everyday at midnight, NY timezone");
+  });
