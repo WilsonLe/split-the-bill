@@ -7,9 +7,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "jest"
+    "start": "jest",
+    "lint": "eslint src --ext .test.ts",
+    "format": "yarn prettier --write \"src/**/*.test.ts\""
   },
   "dependencies": {
+    "expect-puppeteer": "^6.0.0",
     "jest": "^27.3.1",
     "jest-puppeteer": "^6.0.0",
     "puppeteer": "^11.0.0"
@@ -25,6 +28,8 @@
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "babel-jest": "^27.3.1",
-    "eslint": "^8.1.0"
+    "eslint": "^8.1.0",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
   }
 }
