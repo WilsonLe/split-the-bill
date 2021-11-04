@@ -26,7 +26,7 @@ const AddExpensePrompt: FC<Props> = ({
   const addExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const amountNumber = Number(amount);
-    if (amountNumber < 0) {
+    if (amountNumber <= 0) {
       setAmountError("Amount must be positive");
       return;
     }

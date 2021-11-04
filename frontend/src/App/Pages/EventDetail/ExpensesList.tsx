@@ -1,8 +1,9 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 
 import classNames from "../../../utils/classNames";
+import UserContext from "../../Contexts/UserContext";
 import { DetailExpenses, Event, Expenses, UserInfos } from "../../interfaces";
 import EditExpense from "./EditExpense";
 
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
+  const user = useContext(UserContext);
   const [detailExpenses, setDetailExpenses] = useState<DetailExpenses>([]);
 
   // set detail expense (expense with user info)
@@ -130,12 +132,14 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
                                       .toLocaleTimeString()}
                                   </div>
                                 </td>
-                                <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
-                                  <EditExpense
-                                    currentEvent={currentEvent}
-                                    expense={expense}
-                                  />
-                                </td>
+                                {expense.user.uid === user?.uid && (
+                                  <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
+                                    <EditExpense
+                                      currentEvent={currentEvent}
+                                      expense={expense}
+                                    />
+                                  </td>
+                                )}
                               </tr>
                             ))}
                           </tbody>

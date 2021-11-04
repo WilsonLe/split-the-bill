@@ -44,7 +44,7 @@ service cloud.firestore {
   }
 
   function expenseTypeCheck(){
-    return incomingData().amount is number
+    return incomingData().amount > 0
     && incomingData().description is string
     && incomingData().id is string
     && incomingData().spentAt is timestamp
