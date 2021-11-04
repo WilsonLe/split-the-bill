@@ -41,8 +41,12 @@ const Main: FC<Props> = () => {
               photoURL: user.photoURL,
             } as UserInfo);
           }
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          if (error.code === "FirebaseError") {
+            console.log(error.code);
+          } else {
+            console.log(error);
+          }
         }
       }
     })();
