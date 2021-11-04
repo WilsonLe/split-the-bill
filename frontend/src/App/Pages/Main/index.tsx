@@ -42,8 +42,12 @@ const Main: FC<Props> = () => {
             } as UserInfo);
           }
         } catch (error: any) {
-          if (error.code === "FirebaseError") {
-            console.log(error.code);
+          if (
+            error.name === "FirebaseError" &&
+            error.code === "permission-denied" &&
+            error.message.startsWith("\nfalse for 'get' @")
+          ) {
+            // do nothing, this is expected
           } else {
             console.log(error);
           }
