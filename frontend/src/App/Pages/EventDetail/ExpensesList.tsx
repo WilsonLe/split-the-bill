@@ -132,7 +132,8 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
                                       .toLocaleTimeString()}
                                   </div>
                                 </td>
-                                {expense.user.uid === user?.uid && (
+                                {(currentEvent.creator.uid === user?.uid ||
+                                  expense.user.uid === user?.uid) && (
                                   <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
                                     <EditExpense
                                       currentEvent={currentEvent}

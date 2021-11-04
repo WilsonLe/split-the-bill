@@ -218,7 +218,7 @@ const EventDetail: FC<Props> = () => {
                 </ButtonRed>
                 <ConfirmLeave
                   showConfirmLeave={showConfirmLeave}
-                  setShowConfirmLeave={setShowConfirmDelete}
+                  setShowConfirmLeave={setShowConfirmLeave}
                   currentEvent={currentEvent}
                   leaveEventHandler={leaveEventHandler}
                 />
