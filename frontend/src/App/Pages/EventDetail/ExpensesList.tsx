@@ -156,7 +156,7 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
                       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                         <div className="p-6 text-center">
                           <span className="text-gray-500 text-lg">
-                            Empty expense list
+                            No expense created
                           </span>
                         </div>
                       </div>

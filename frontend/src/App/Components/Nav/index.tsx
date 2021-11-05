@@ -10,12 +10,10 @@ import Logo from "./Logo";
 import Navigation from "./Navigation";
 import NewEvent from "./NewEvent";
 import Profile from "./Profile";
-import Bell from "./Bell";
 import UserNavigation from "./UserNavigation";
 import MobileMenuPanel from "./MobileMenuPanel";
 import MobileNavigation from "./MobileNavigation";
 import MobileProfile from "./MobileProfile";
-import MobileBell from "./MobileBell";
 import MobileUserNavigation from "./MobileUserNavigation";
 import MobileUserInfo from "./MobileUserInfo";
 import MobileUserPic from "./MobileUserPic";
@@ -58,7 +56,6 @@ const Nav: FC<Props> = () => {
                   <RightContent>
                     <NewEvent />
                     <Profile>
-                      <Bell />
                       <UserNavigation
                         open={open}
                         userNavigation={userNavigation}
@@ -75,7 +72,6 @@ const Nav: FC<Props> = () => {
                 <MobileUserInfo>
                   <MobileUserPic />
                   <MobileUserNameEmail />
-                  <MobileBell />
                 </MobileUserInfo>
                 <MobileUserNavigation userNavigation={userNavigation} />
               </MobileProfile>
