@@ -1,16 +1,27 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Disclosure } from "@headlessui/react";
-import { ChevronRightIcon } from "@heroicons/react/outline";
+import { ChevronRightIcon, XCircleIcon } from "@heroicons/react/outline";
 import classNames from "../../../utils/classNames";
-import { UserInfo, UserInfos } from "../../interfaces";
+import { Event, UserInfo, UserInfos } from "../../interfaces";
+import UserContext from "../../Contexts/UserContext";
 
 interface Props {
   members: UserInfos;
   creator: UserInfo;
+  currentEvent: Event;
+  setToBeRemovedMember: React.Dispatch<React.SetStateAction<UserInfo>>;
+  setShowConfirmKick: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MembersList: FC<Props> = ({ members, creator }) => {
+const MembersList: FC<Props> = ({
+  members,
+  creator,
+  currentEvent,
+  setToBeRemovedMember,
+  setShowConfirmKick,
+}) => {
+  const user = useContext(UserContext);
   return (
     <div className="bg-white px-6 py-8 border-b border-gray-200 sm:px-6 ">
       <Disclosure defaultOpen={true}>
@@ -38,7 +49,19 @@ const MembersList: FC<Props> = ({ members, creator }) => {
                       key={uuidv4()}
                       className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
                     >
-                      <div className="w-full flex items-center justify-between p-6 space-x-6">
+                      <div className="w-full flex items-center justify-between p-6 space-x-6 relative">
+                        {user?.uid === currentEvent?.creator.uid &&
+                          member.uid !== currentEvent.creator.uid && (
+                            <div
+                              className="absolute top-0 right-0"
+                              onClick={() => {
+                                setToBeRemovedMember(member);
+                                setShowConfirmKick(true);
+                              }}
+                            >
+                              <XCircleIcon className="h-6 w-6 m-1" />
+                            </div>
+                          )}
                         <div className="flex-1 truncate">
                           <div className="flex items-center space-x-3">
                             <h3 className="text-gray-900 text-sm font-medium truncate">
@@ -54,7 +77,7 @@ const MembersList: FC<Props> = ({ members, creator }) => {
                         <img
                           className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
                           src={member.photoURL}
-                          alt=""
+                          alt="Profile picture"
                         />
                       </div>
                     </li>

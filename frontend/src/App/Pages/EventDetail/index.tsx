@@ -11,6 +11,7 @@ import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
   dummyEvent,
+  dummyUserInfo,
   dummyUserInfos,
   Event,
   EventWithoutMemberExpense,
@@ -23,6 +24,7 @@ import ExpensesList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
 import MembersList from "./MembersList";
 import SplitTheBill from "./SplitTheBill";
+import ConfirmKick from "../../Components/Popup/ConfirmKick";
 
 interface Props {}
 
@@ -43,6 +45,9 @@ const EventDetail: FC<Props> = () => {
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
+  const [showConfirmKick, setShowConfirmKick] = useState(false);
+  const [toBeRemovedMember, setToBeRemovedMember] =
+    useState<UserInfo>(dummyUserInfo);
   const [eventDeleted, setEventDeleted] = useState(false);
   const [eventLeft, setEventLeft] = useState(false);
   const query = new URLSearchParams(useLocation().search);
@@ -174,6 +179,21 @@ const EventDetail: FC<Props> = () => {
     }
   };
 
+  const kickMemberHandler = async (member: UserInfo) => {
+    if (user?.uid && currentEvent?.creator.uid) {
+      try {
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "members", member.uid)
+        );
+        await deleteDoc(
+          doc(db, "users", member.uid, "events", currentEvent.code)
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <>
       {!auth && <Redirect to={`/login?code=${eventCode}`} />}
@@ -228,6 +248,16 @@ const EventDetail: FC<Props> = () => {
           <MembersList
             members={currentEvent.members}
             creator={currentEvent.creator}
+            currentEvent={currentEvent}
+            setToBeRemovedMember={setToBeRemovedMember}
+            setShowConfirmKick={setShowConfirmKick}
+          />
+          <ConfirmKick
+            showConfirmKick={showConfirmKick}
+            setShowConfirmKick={setShowConfirmKick}
+            currentEvent={currentEvent}
+            member={toBeRemovedMember}
+            kickMemberHandler={kickMemberHandler}
           />
           <ExpensesList
             currentEvent={currentEvent}

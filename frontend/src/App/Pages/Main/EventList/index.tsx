@@ -49,7 +49,7 @@ const EventList: FC<Props> = ({ eventList }) => {
                             <img
                               className="h-10 w-10 rounded-full"
                               src={event.creator.photoURL}
-                              alt={`Profile of ${event.creator.displayName}`}
+                              alt={`Profile picture`}
                             />
                           </div>
                           <div className="ml-4">

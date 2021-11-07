@@ -36,6 +36,10 @@ service cloud.firestore {
     return exists(/databases/$(database)/documents/users/$(user)/events/$(event))
   }
 
+  function deleterIsCreator(database, event){
+    return get(/databases/$(database)/documents/events/$(event)).data.creator.uid == request.auth.uid
+  }
+
   function eventTypeCheck(){
     return incomingData().code is string
     && incomingData().createdAt is timestamp
@@ -129,7 +133,8 @@ service cloud.firestore {
       allow delete:
         if isLoggedIn()
         && userAlreadyJoined(database, user, event)
-        && isTheUser(database, user);
+        && (isTheUser(database, user) 
+        || deleterIsCreator(database, event));
     }
 
     match /versions/{version} {

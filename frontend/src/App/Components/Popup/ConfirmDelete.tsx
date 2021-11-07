@@ -1,5 +1,5 @@
-import { Dialog } from "@headlessui/react";
 import React, { FC } from "react";
+import { Dialog } from "@headlessui/react";
 import { BasePopup } from ".";
 import { Event } from "../../interfaces";
 import { ButtonLight, ButtonRed } from "../Button";

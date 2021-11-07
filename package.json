@@ -25,7 +25,7 @@
     "format:functions": "yarn --cwd functions format",
     "format:test": "yarn --cwd test format",
     "test": "yarn --cwd test start",
-    "test:ci": "concurrently -k \"yarn serve:ci\" \"yarn waiton:ci\"",
+    "test:ci": "concurrently -k -s \"first\" \"yarn serve:ci\" \"yarn waiton:ci\"",
     "waiton:ci": "wait-on tcp:3000 && yarn emulators:ci",
     "serve:ci": "serve -s frontend/build -l 3000",
     "emulators:ci": "firebase emulators:exec \"yarn test\""
