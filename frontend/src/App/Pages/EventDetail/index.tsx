@@ -11,7 +11,7 @@ import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
   dummyEvent,
-  dummyUserInfos,
+  dummyUserInfo,
   Event,
   EventWithoutMemberExpense,
   Expenses,
@@ -23,6 +23,7 @@ import ExpensesList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
 import MembersList from "./MembersList";
 import SplitTheBill from "./SplitTheBill";
+import ConfirmKick from "../../Components/Popup/ConfirmKick";
 
 interface Props {}
 
@@ -34,7 +35,6 @@ const EventDetail: FC<Props> = () => {
     useState<EventWithoutMemberExpense>();
   const [expensesData, setExpensesData] = useState<Expenses>();
   const [membersData, setMembersData] = useState<UserInfos>();
-  const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
   const [isMember, setIsMember] = useState(true);
@@ -43,6 +43,9 @@ const EventDetail: FC<Props> = () => {
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
+  const [showConfirmKick, setShowConfirmKick] = useState(false);
+  const [toBeRemovedMember, setToBeRemovedMember] =
+    useState<UserInfo>(dummyUserInfo);
   const [eventDeleted, setEventDeleted] = useState(false);
   const [eventLeft, setEventLeft] = useState(false);
   const query = new URLSearchParams(useLocation().search);
@@ -55,9 +58,8 @@ const EventDetail: FC<Props> = () => {
         doc(db, "events", eventCode),
         (doc) => {
           if (doc.exists()) {
-            const event = doc.data();
+            const event = doc.data() as EventWithoutMemberExpense;
             setCurrentEventWithoutExpense(event as EventWithoutMemberExpense);
-            setMembers(event.members);
           }
         },
         (error) => {
@@ -174,6 +176,21 @@ const EventDetail: FC<Props> = () => {
     }
   };
 
+  const kickMemberHandler = async (member: UserInfo) => {
+    if (user?.uid && currentEvent?.creator.uid) {
+      try {
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "members", member.uid)
+        );
+        await deleteDoc(
+          doc(db, "users", member.uid, "events", currentEvent.code)
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <>
       {!auth && <Redirect to={`/login?code=${eventCode}`} />}
@@ -218,7 +235,7 @@ const EventDetail: FC<Props> = () => {
                 </ButtonRed>
                 <ConfirmLeave
                   showConfirmLeave={showConfirmLeave}
-                  setShowConfirmLeave={setShowConfirmDelete}
+                  setShowConfirmLeave={setShowConfirmLeave}
                   currentEvent={currentEvent}
                   leaveEventHandler={leaveEventHandler}
                 />
@@ -228,6 +245,16 @@ const EventDetail: FC<Props> = () => {
           <MembersList
             members={currentEvent.members}
             creator={currentEvent.creator}
+            currentEvent={currentEvent}
+            setToBeRemovedMember={setToBeRemovedMember}
+            setShowConfirmKick={setShowConfirmKick}
+          />
+          <ConfirmKick
+            showConfirmKick={showConfirmKick}
+            setShowConfirmKick={setShowConfirmKick}
+            currentEvent={currentEvent}
+            toBeRemovedMember={toBeRemovedMember}
+            kickMemberHandler={kickMemberHandler}
           />
           <ExpensesList
             currentEvent={currentEvent}
@@ -237,7 +264,10 @@ const EventDetail: FC<Props> = () => {
 
           <div className="relative mt-2 mb-10 h-16">
             <div className="absolute left-1/2 top-0 transform -translate-x-1/2 translate-y-1/2">
-              <SplitTheBill currentEvent={currentEvent} members={members} />
+              <SplitTheBill
+                currentEvent={currentEvent}
+                members={currentEvent.members}
+              />
             </div>
             <div className="absolute right-0 top-0transform translate-y-1/4">
               <AddExpense

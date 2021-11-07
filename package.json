@@ -16,12 +16,28 @@
     "build": "yarn build:frontend && yarn build:functions",
     "build:frontend": "yarn --cwd frontend build",
     "build:functions": "yarn --cwd functions build",
-    "lint": "yarn --cwd frontend lint && yarn --cwd functions lint",
-    "format": "yarn --cwd frontend format && yarn --cwd functions format",
-    "test": "firebase emulators:exec \"yarn --cwd test start\""
+    "lint": "concurrently \"yarn:lint:*\"",
+    "lint:frontend": "yarn --cwd frontend lint",
+    "lint:functions": "yarn --cwd functions lint",
+    "lint:test": "yarn --cwd test lint",
+    "format": "concurrently \"yarn:format:*\"",
+    "format:frontend": "yarn --cwd frontend format",
+    "format:functions": "yarn --cwd functions format",
+    "format:test": "yarn --cwd test format",
+    "test": "yarn --cwd test start",
+    "test:ci": "concurrently -k -s \"first\" \"yarn serve:ci\" \"yarn waiton:ci\"",
+    "waiton:ci": "wait-on tcp:3000 && yarn emulators:ci",
+    "serve:ci": "serve -s frontend/build -l 3000",
+    "emulators:ci": "firebase emulators:exec \"yarn test\""
   },
+  "pre-commit": [
+    "lint",
+    "format"
+  ],
   "dependencies": {
-    "concurrently": "^6.3.0"
+    "concurrently": "^6.3.0",
+    "serve": "^12.0.1",
+    "wait-on": "^6.0.0"
   },
   "prettier": {
     "trailingComma": "es5",
@@ -29,5 +45,7 @@
     "semi": true,
     "singleQuote": false
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "pre-commit": "^1.2.2"
+  }
 }

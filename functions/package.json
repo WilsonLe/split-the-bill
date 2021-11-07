@@ -1,7 +1,7 @@
 {
   "name": "functions",
   "scripts": {
-    "start": "firebase emulators:start",
+    "start": "firebase emulators:start --only functions,firestore,auth",
     "build": "tsc",
     "lint": "eslint src --ext .ts",
     "format": "yarn prettier --write \"src/**/*.ts\""

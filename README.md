@@ -2,19 +2,20 @@
 
 ## Demo link:
 
-Access my site at [split-the-bill-production.web.app](https://split-the-bill-production.web.app)
+Access my site at [split-the-bill-wilsonle.web.app](https://split-the-bill-wilsonle.web.app)
 
 ## Table of Content:
 
 - [Split-The-Bill](#split-the-bill)
-	- [Demo link:](#demo-link)
-	- [Table of Content:](#table-of-content)
-	- [About The App](#about-the-app)
-	- [Screenshots](#screenshots)
-	- [Technologies](#technologies)
-	- [Status](#status)
-	- [Credits](#credits)
-	- [License](#license)
+  - [Demo link:](#demo-link)
+  - [Table of Content:](#table-of-content)
+  - [About The App](#about-the-app)
+  - [Screenshots](#screenshots)
+  - [Technologies](#technologies)
+  - [Get Started](#get-started)
+  - [Status](#status)
+  - [Credits](#credits)
+  - [License](#license)
 
 ## About The App
 
@@ -32,9 +33,29 @@ Many things in life are worth waiting for. Split The Bill screenshots are one of
 
 - Backend: [Firebase](https://firebase.google.com)
 
+## Get Started
+
+- Install dependencies in all project folders
+
+```
+yarn install
+```
+
+- Concurrently start React app and emulators
+
+```
+yarn start
+```
+
+- Run end to end test
+
+```
+yarn test
+```
+
 ## Status
 
-[Development note](https://split-the-bill-production.web.app/versions)
+[Development note](https://split-the-bill-wilsonle.web.app/versions)
 
 ## Credits
 

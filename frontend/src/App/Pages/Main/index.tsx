@@ -41,8 +41,16 @@ const Main: FC<Props> = () => {
               photoURL: user.photoURL,
             } as UserInfo);
           }
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          if (
+            error.name === "FirebaseError" &&
+            error.code === "permission-denied" &&
+            error.message.startsWith("\nfalse for 'get' @")
+          ) {
+            // do nothing, this is expected
+          } else {
+            console.log(error);
+          }
         }
       }
     })();
