@@ -12,7 +12,6 @@ import UserContext from "../../Contexts/UserContext";
 import {
   dummyEvent,
   dummyUserInfo,
-  dummyUserInfos,
   Event,
   EventWithoutMemberExpense,
   Expenses,
@@ -36,7 +35,6 @@ const EventDetail: FC<Props> = () => {
     useState<EventWithoutMemberExpense>();
   const [expensesData, setExpensesData] = useState<Expenses>();
   const [membersData, setMembersData] = useState<UserInfos>();
-  const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
   const [isValidCode, setIsValidCode] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
   const [isMember, setIsMember] = useState(true);
@@ -60,9 +58,8 @@ const EventDetail: FC<Props> = () => {
         doc(db, "events", eventCode),
         (doc) => {
           if (doc.exists()) {
-            const event = doc.data();
+            const event = doc.data() as EventWithoutMemberExpense;
             setCurrentEventWithoutExpense(event as EventWithoutMemberExpense);
-            setMembers(event.members);
           }
         },
         (error) => {
@@ -256,7 +253,7 @@ const EventDetail: FC<Props> = () => {
             showConfirmKick={showConfirmKick}
             setShowConfirmKick={setShowConfirmKick}
             currentEvent={currentEvent}
-            member={toBeRemovedMember}
+            toBeRemovedMember={toBeRemovedMember}
             kickMemberHandler={kickMemberHandler}
           />
           <ExpensesList
@@ -267,7 +264,10 @@ const EventDetail: FC<Props> = () => {
 
           <div className="relative mt-2 mb-10 h-16">
             <div className="absolute left-1/2 top-0 transform -translate-x-1/2 translate-y-1/2">
-              <SplitTheBill currentEvent={currentEvent} members={members} />
+              <SplitTheBill
+                currentEvent={currentEvent}
+                members={currentEvent.members}
+              />
             </div>
             <div className="absolute right-0 top-0transform translate-y-1/4">
               <AddExpense

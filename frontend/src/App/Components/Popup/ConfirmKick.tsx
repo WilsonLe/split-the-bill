@@ -5,7 +5,7 @@ import { ButtonLight, ButtonRed } from "../Button";
 interface Props {
   showConfirmKick: boolean;
   setShowConfirmKick: React.Dispatch<React.SetStateAction<boolean>>;
-  member: UserInfo;
+  toBeRemovedMember: UserInfo;
   currentEvent: Event;
 
   kickMemberHandler: (member: UserInfo) => Promise<void>;
@@ -14,7 +14,7 @@ interface Props {
 const ConfirmKick: FC<Props> = ({
   showConfirmKick,
   setShowConfirmKick,
-  member,
+  toBeRemovedMember,
   kickMemberHandler,
 }) => {
   return (
@@ -61,7 +61,7 @@ const ConfirmKick: FC<Props> = ({
                   as="h3"
                   className="text-lg leading-6 font-medium text-gray-900"
                 >
-                  Remove {member?.displayName}?
+                  Remove {toBeRemovedMember?.displayName}?
                 </Dialog.Title>
                 <div className="mt-2">
                   <div className="my-2">
@@ -77,7 +77,7 @@ const ConfirmKick: FC<Props> = ({
                     <ButtonRed
                       onClick={() => {
                         setShowConfirmKick(false);
-                        kickMemberHandler(member);
+                        kickMemberHandler(toBeRemovedMember);
                       }}
                     >
                       Remove

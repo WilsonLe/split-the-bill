@@ -43,6 +43,14 @@ const SplitTheBillPopup: FC<Props> = ({
   const [transactions, setTransactions] = useState<Transactions>([]);
 
   useEffect(() => {
+    console.log(currentEvent);
+  }, [currentEvent]);
+
+  useEffect(() => {
+    console.log(members);
+  }, [members]);
+
+  useEffect(() => {
     // right now, if user add expense, this runs 3 times.
     // if user delete expense, this run 2 times.
     // will attempt to look into this
@@ -57,6 +65,7 @@ const SplitTheBillPopup: FC<Props> = ({
         });
         expenseListByMember[member.displayName] = tempMemberExpense;
       });
+      console.log(`expense list by member: ${expenseListByMember}`);
 
       const totalExpenseByMember: ExpenseByMember = {};
       for (const memberName in expenseListByMember) {
