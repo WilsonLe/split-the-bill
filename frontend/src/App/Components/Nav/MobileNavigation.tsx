@@ -5,7 +5,7 @@ interface Props {
   navigation: {
     name: string;
     href: string;
-    current: Boolean;
+    current: boolean;
   }[];
 }
 const MobileNavigation: FC<Props> = ({ navigation }) => {

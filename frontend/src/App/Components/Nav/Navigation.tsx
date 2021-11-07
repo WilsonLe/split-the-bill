@@ -6,7 +6,7 @@ interface Props {
     | {
         name: string;
         href: string;
-        current: Boolean;
+        current: boolean;
       }[];
 }
 

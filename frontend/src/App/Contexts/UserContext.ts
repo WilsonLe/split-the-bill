@@ -1,7 +1,7 @@
 import { createContext } from "react";
-import { firebase } from "../../firebase.config";
+import { User as FirebaseUser } from "firebase/auth";
 
-type User = firebase.User | undefined | null;
+type User = FirebaseUser | undefined | null;
 let defaultUser: User;
 const UserContext = createContext(defaultUser);
 

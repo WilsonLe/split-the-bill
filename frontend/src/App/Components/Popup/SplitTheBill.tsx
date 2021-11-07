@@ -43,13 +43,21 @@ const SplitTheBillPopup: FC<Props> = ({
   const [transactions, setTransactions] = useState<Transactions>([]);
 
   useEffect(() => {
+    console.log(currentEvent);
+  }, [currentEvent]);
+
+  useEffect(() => {
+    console.log(members);
+  }, [members]);
+
+  useEffect(() => {
     // right now, if user add expense, this runs 3 times.
     // if user delete expense, this run 2 times.
     // will attempt to look into this
     if (currentEvent && members) {
-      let expenseListByMember: ExpenseListByMember = {};
+      const expenseListByMember: ExpenseListByMember = {};
       members.forEach((member) => {
-        let tempMemberExpense: MemberExpense = {};
+        const tempMemberExpense: MemberExpense = {};
         currentEvent.expenses.forEach((expense) => {
           if (expense.user === member.uid) {
             tempMemberExpense[expense.description] = expense.amount;
@@ -57,8 +65,9 @@ const SplitTheBillPopup: FC<Props> = ({
         });
         expenseListByMember[member.displayName] = tempMemberExpense;
       });
+      console.log(`expense list by member: ${expenseListByMember}`);
 
-      let totalExpenseByMember: ExpenseByMember = {};
+      const totalExpenseByMember: ExpenseByMember = {};
       for (const memberName in expenseListByMember) {
         totalExpenseByMember[memberName] = 0;
         for (const expenseName in expenseListByMember[memberName]) {
@@ -75,8 +84,8 @@ const SplitTheBillPopup: FC<Props> = ({
       }
       const average = total / Object.keys(totalExpenseByMember).length;
 
-      let payers: ExpenseByMember = {};
-      let receivers: ExpenseByMember = {};
+      const payers: ExpenseByMember = {};
+      const receivers: ExpenseByMember = {};
       for (const memberName in totalExpenseByMember) {
         const expense = totalExpenseByMember[memberName];
         if (expense === average) continue;
@@ -88,7 +97,7 @@ const SplitTheBillPopup: FC<Props> = ({
       for (const r in receivers)
         receivers[r] = Math.abs(average - receivers[r]);
 
-      let transactions = [];
+      const transactions = [];
       for (const r in receivers) {
         for (const p in payers) {
           if (receivers[r] === payers[p]) {

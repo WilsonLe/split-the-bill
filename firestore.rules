@@ -12,60 +12,56 @@ service cloud.firestore {
     return request.auth != null;
   }
 
-	function isSelf(){
-  	return request.auth.uid == existingData().uid;
+  function isCreator(database, event) {
+    return get(/databases/$(database)/documents/events/$(event)).data.creator.uid == request.auth.uid
   }
 
-  function isMember() {
-    return request.auth.uid in existingData().members;
+  function isMember(database, event){
+    return exists(/databases/$(database)/documents/users/$(request.auth.uid)/events/$(event))
   }
 
-  function isCreator() {
-    return request.auth.uid == existingData().creator.uid;
+  function isExpenseOwner(){
+    return request.auth.uid == existingData().user;
   }
 
-  function updatedMembers(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['members']);
+  function theUserExist(database, user){
+    return exists(/databases/$(database)/documents/users/$(user))
   }
 
-  function addedMemberIsThemself(){
-    return (request.auth.uid in incomingData().members)
-    && !(request.auth.uid in existingData().members);
+  function isTheUser(database, user){
+    return get(/databases/$(database)/documents/users/$(user)).data.uid == request.auth.uid;
   }
 
-  function removedMemberIsThemself(){
-    return !(request.auth.uid in incomingData().members) 
-    && (request.auth.uid in existingData().members);
+  function userAlreadyJoined(database, user, event){
+    return exists(/databases/$(database)/documents/users/$(user)/events/$(event))
   }
 
-  function updatedExpenses(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['expenses']);
+  function deleterIsCreator(database, event){
+    return get(/databases/$(database)/documents/events/$(event)).data.creator.uid == request.auth.uid
   }
 
-  function updatedReadableMember(){
-    return incomingData().diff(existingData()).changedKeys().hasOnly(['readableMember']);
-  }
-
-	function eventTypeCheck(){
-  	return incomingData().code is string
+  function eventTypeCheck(){
+    return incomingData().code is string
     && incomingData().createdAt is timestamp
     && incomingData().name is string
     && incomingData().creator is map
-    && incomingData().members is list
   }
-  
+
+  function expenseTypeCheck(){
+    return incomingData().amount > 0
+    && incomingData().description is string
+    && incomingData().id is string
+    && incomingData().spentAt is timestamp
+    && incomingData().user is string;
+  }
+
   function userTypeCheck(){
-  	return incomingData().displayName is string
-    && incomingData().photoURL is string
-    && incomingData().uid is string
-    && incomingData().readableMember is list
+    return incomingData().uid is string
+    && (incomingData().photoURL is string
+    || incomingData().photoURL == null)
+    && incomingData().displayName is string
   }
-  
-  function userReadable(database){
-  	return get(/databases/$(database)/documents/users/$(request.auth.uid)) != null
-    && existingData().uid in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readableMember
-  }
-  
+
   match /databases/{database}/documents {
     match /events/{event} {
       allow read:
@@ -75,31 +71,78 @@ service cloud.firestore {
         && eventTypeCheck();
       allow delete:
         if isLoggedIn() 
-        && isCreator();
-      allow update:
+        && isCreator(database, event);
+    }
+
+    match /events/{event}/expenses/{expense} {
+      allow create: 
         if isLoggedIn() 
-        && isMember() 
-        && (updatedMembers() 
-        && (addedMemberIsThemself() || removedMemberIsThemself()))
-        || (updatedExpenses());
+        && isMember(database, event)
+        && expenseTypeCheck();
+      allow update: 
+        if isLoggedIn()
+        && ((isMember(database, event)
+        && request.auth.uid == existingData().user)
+        || isCreator(database, event))
+        && expenseTypeCheck();
+      allow delete: if isLoggedIn()
+        && ((isMember(database, event) && isExpenseOwner())
+        || isCreator(database, event));
+      allow read:
+        if isLoggedIn()
+        && (isMember(database, event));
     }
-    match /users/{user} {
+    
+    match /events/{event}/members/{member} {
       allow create:
-        if isLoggedIn() && userTypeCheck();
+        if isLoggedIn()
+        && userTypeCheck();
       allow update:
-      	if isLoggedIn() && isSelf() && updatedReadableMember();
-			allow read:
-      	if isLoggedIn() 
-        && ((isSelf() && userReadable(database)) 
-        || resource == null);
+        if false;
       allow delete:
-      	if false;
+        if isLoggedIn()
+        && ((isMember(database, event) 
+        && existingData().uid == request.auth.uid) 
+        || isCreator(database, event));
+      allow read:
+        if isLoggedIn()
+        && isMember(database, event);
     }
+    
+    match /users/{user} {
+      allow read:
+        if isLoggedIn()
+        && ((resource == null)
+        || (resource != null
+        && existingData().uid == request.auth.uid));
+      allow write:
+        if isLoggedIn() && incomingData().uid == request.auth.uid;
+    }
+    
+    match /users/{user}/events/{event} {
+      allow read:
+        if isLoggedIn() 
+        && ((theUserExist(database, user) == false)
+        ||(theUserExist(database, user) 
+        && isTheUser(database, user)));
+      allow create:
+        if isLoggedIn()
+        && userAlreadyJoined(database, user, event) == false
+        && isTheUser(database, user)
+        && incomingData().code is string;
+      allow delete:
+        if isLoggedIn()
+        && userAlreadyJoined(database, user, event)
+        && (isTheUser(database, user) 
+        || deleterIsCreator(database, event));
+    }
+
     match /versions/{version} {
-      allow read;
+      allow read: if true;
       allow write: if false;
     }
   }
 }
+
 
 

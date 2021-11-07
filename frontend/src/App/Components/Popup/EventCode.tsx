@@ -19,9 +19,7 @@ const EventCode: FC<Props> = ({
 }) => {
   const [copyEventCode, setCopyEventCode] = useState(false);
 
-  const copyEventCodeHandler = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const copyEventCodeHandler = () => {
     setCopyEventCode(true);
     navigator.clipboard.writeText(
       `${window.location.origin}/event?code=${currentEvent?.code}`

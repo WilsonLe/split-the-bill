@@ -1,4 +1,4 @@
-import { firebase } from "../firebase.config";
+import { Timestamp } from "firebase/firestore";
 
 interface UserInfo {
   uid: string;
@@ -11,18 +11,22 @@ interface Event {
   id: string;
   name: string;
   code: string;
-  members: string[];
   expenses: Expenses;
-  createdAt: firebase.firestore.Timestamp;
+  members: UserInfos;
+  membersUid: string[];
+  createdAt: Timestamp;
   creator: UserInfo;
 }
+
+export interface EventWithoutMemberExpense
+  extends Omit<Event, "expenses" | "members" | "membersUid"> {}
 
 interface Expense {
   id: string;
   user: string;
   amount: number;
   description: string;
-  spentAt: firebase.firestore.Timestamp;
+  spentAt: Timestamp;
 }
 
 interface DetailExpense extends Omit<Expense, "user"> {
@@ -30,7 +34,7 @@ interface DetailExpense extends Omit<Expense, "user"> {
 }
 
 interface Version {
-  createdAt: firebase.firestore.Timestamp;
+  createdAt: Timestamp;
   note: string;
   version: string;
 }
@@ -45,6 +49,7 @@ let dummyUserInfo: UserInfo;
 let dummyUserInfos: UserInfos;
 let dummyEvent: Event;
 let dummyExpense: Expense;
+let dummyEventWithoutExpense: EventWithoutMemberExpense;
 let dummyExpenses: Expenses;
 let dummyDetailExpense: DetailExpense;
 let dummyDetailExpenses: DetailExpenses;
@@ -62,6 +67,7 @@ export type {
 };
 export {
   dummyEvent,
+  dummyEventWithoutExpense,
   dummyUserInfo,
   dummyUserInfos,
   dummyExpense,

@@ -7,35 +7,86 @@ import Border from "../../Components/Border";
 import UserContext from "../../Contexts/UserContext";
 import EventList from "./EventList";
 
-import { Event } from "../../interfaces";
+import { Event, UserInfo } from "../../interfaces";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 
 interface Props {}
 
 const Main: FC<Props> = () => {
   const user = useContext(UserContext);
   const [eventList, setEventList] = useState<Event[]>([]);
+  const [eventCodeList, setEventCodeList] = useState<string[]>([]);
 
-  // fetch all event that has current user a member
+  // check if user in user collection
+  // if user in collection, do nothing
+  // else, create one
   useEffect(() => {
-    if (user) {
-      const unsubscribe = db
-        .collection("events")
-        .where("members", "array-contains", user.uid)
-        .onSnapshot(
-          (querySnapshot) => {
-            const creatorEvents: Event[] = [];
-            querySnapshot.forEach((doc) => {
-              creatorEvents.push(doc.data() as Event);
-            });
-            setEventList(creatorEvents);
-          },
-          (error) => {
+    (async () => {
+      if (user) {
+        try {
+          const userSnap = await getDoc(doc(db, "users", user.uid));
+          if (!userSnap.exists()) {
+            await setDoc(doc(db, "users", user.uid), {
+              uid: user.uid,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            } as UserInfo);
+          }
+        } catch (error: any) {
+          if (
+            error.name === "FirebaseError" &&
+            error.code === "permission-denied" &&
+            error.message.startsWith("\nfalse for 'get' @")
+          ) {
+            // do nothing, this is expected
+          } else {
             console.log(error);
           }
-        );
+        }
+      }
+    })();
+  }, [user]);
+
+  // fetch all event codes of current user
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = onSnapshot(
+        collection(db, "users", user.uid, "events"),
+        (querySnapshot) => {
+          const creatorEventCodes: string[] = querySnapshot.docs.map(
+            (doc) => doc.id
+          );
+          setEventCodeList(creatorEventCodes);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
       return () => unsubscribe();
     }
   }, [user]);
+
+  // fetch all event data in event codes
+  useEffect(() => {
+    (async () => {
+      if (user && eventCodeList.length > 0) {
+        const eventSnap = await getDocs(
+          query(collection(db, "events"), where("code", "in", eventCodeList))
+        );
+        const eventList: Event[] = eventSnap.docs.map((e) => e.data() as Event);
+        setEventList(eventList);
+      }
+    })();
+  }, [user, eventCodeList]);
 
   return (
     <>

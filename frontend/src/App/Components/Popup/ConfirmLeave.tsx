@@ -27,9 +27,6 @@ const ConfirmLeave: FC<Props> = ({
           Leave event {currentEvent?.name}?
         </Dialog.Title>
         <div className="mt-2">
-          <div className="my-2">
-            <p className="text-sm text-red-500">This action cannot be undone</p>
-          </div>
           <div className="flex justify-center">
             <ButtonLight onClick={() => setShowConfirmLeave(false)}>
               Cancel

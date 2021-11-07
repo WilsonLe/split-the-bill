@@ -1,8 +1,15 @@
 module.exports = {
   env: {
+    jest: true,
     browser: true,
     es2021: true,
     node: true,
+  },
+  globals: {
+    page: true,
+    browser: true,
+    context: true,
+    jestPuppeteer: true,
   },
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   parser: "@typescript-eslint/parser",

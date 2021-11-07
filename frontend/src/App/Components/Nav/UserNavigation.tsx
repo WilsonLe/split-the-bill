@@ -5,7 +5,7 @@ import UserPic from "./UserPic";
 import classNames from "../../../utils/classNames";
 
 interface Props {
-  open: Boolean;
+  open: boolean;
   userNavigation: { name: string; href: string }[];
 }
 

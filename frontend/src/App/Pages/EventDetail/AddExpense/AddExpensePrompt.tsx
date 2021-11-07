@@ -1,9 +1,10 @@
 import React, { FC, useContext, useState } from "react";
 import UserContext from "../../../Contexts/UserContext";
-import { db, firebase } from "../../../../firebase.config";
+import { db } from "../../../../firebase.config";
 import { Event, Expense } from "../../../interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { ButtonPrimary } from "../../../Components/Button";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
 
 interface Props {
   currentEvent: Event;
@@ -18,29 +19,37 @@ const AddExpensePrompt: FC<Props> = ({
 }) => {
   const user = useContext(UserContext);
   const [note, setNote] = useState("");
-  const [amount, setAmount] = useState<string | number>("");
+  const [amount, setAmount] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
+  const [noteError, setNoteError] = useState<string>("");
+
   const addExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const amountNumber = Number(amount);
+    if (amountNumber <= 0) {
+      setAmountError("Amount must be positive");
+      return;
+    }
+    if (note === "") {
+      setNoteError("Item note not specified");
+      return;
+    }
     if (user && currentEvent) {
+      const updatedExpenses = [...currentEvent.expenses];
       const updatedEvent = {
         ...currentEvent,
-        expenses: [
-          ...currentEvent.expenses,
-          {
-            id: uuidv4(),
-            user: user.uid,
-            amount: amount as number,
-            description: note,
-            spentAt: firebase.firestore.Timestamp.now(),
-          } as Expense,
-        ],
+        expenses: updatedExpenses,
       };
       setCurrentEvent(updatedEvent);
+      const id = uuidv4();
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update(updatedEvent);
+        await setDoc(doc(db, "events", currentEvent.code, "expenses", id), {
+          id,
+          user: user.uid,
+          amount: amountNumber,
+          description: note,
+          spentAt: Timestamp.now(),
+        } as Expense);
       } catch (error) {
         console.log(error);
       }
@@ -49,16 +58,18 @@ const AddExpensePrompt: FC<Props> = ({
   };
 
   const noteChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoteError("");
     setNote(e.target.value);
   };
 
   const amountChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmountError("");
     setAmount(e.target.value);
   };
 
   return (
     <>
-      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 w-80">
+      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 w-80">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
           Add expense
         </h3>
@@ -96,6 +107,16 @@ const AddExpensePrompt: FC<Props> = ({
               />
             </div>
           </div>
+          {noteError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {noteError}
+            </span>
+          )}
+          {amountError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {amountError}
+            </span>
+          )}
           <ButtonPrimary type="submit" className="w-full justify-center">
             Add
           </ButtonPrimary>

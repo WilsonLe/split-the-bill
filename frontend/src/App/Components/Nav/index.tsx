@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 
 import Wrapper from "./Wrapper";
 
@@ -10,20 +10,20 @@ import Logo from "./Logo";
 import Navigation from "./Navigation";
 import NewEvent from "./NewEvent";
 import Profile from "./Profile";
-import Bell from "./Bell";
 import UserNavigation from "./UserNavigation";
 import MobileMenuPanel from "./MobileMenuPanel";
 import MobileNavigation from "./MobileNavigation";
 import MobileProfile from "./MobileProfile";
-import MobileBell from "./MobileBell";
 import MobileUserNavigation from "./MobileUserNavigation";
 import MobileUserInfo from "./MobileUserInfo";
 import MobileUserPic from "./MobileUserPic";
 import MobileUserNameEmail from "./MobileUserNameEmail";
 import Border from "../Border";
+import UserContext from "../../Contexts/UserContext";
 
 interface Props {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const navigation: any[] = [
   // { name: "", href: "", current: false },
   // { name: "Team", href: "#", current: false },
@@ -31,13 +31,15 @@ const navigation: any[] = [
   // { name: "Calendar", href: "#", current: false },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userNavigation: any[] = [
-  { name: "Your Profile", href: "/user" },
-  { name: "Settings", href: "/settings" },
+  // { name: "Your Profile", href: "/user" },
+  // { name: "Settings", href: "/settings" },
   { name: "Sign out", href: "/logout" },
 ];
 
 const Nav: FC<Props> = () => {
+  const user = useContext(UserContext);
   return (
     <>
       <Wrapper>
@@ -50,16 +52,17 @@ const Nav: FC<Props> = () => {
                   <Logo />
                   <Navigation navigation={navigation} />
                 </LeftContent>
-                <RightContent>
-                  <NewEvent />
-                  <Profile>
-                    <Bell />
-                    <UserNavigation
-                      open={open}
-                      userNavigation={userNavigation}
-                    />
-                  </Profile>
-                </RightContent>
+                {user && (
+                  <RightContent>
+                    <NewEvent />
+                    <Profile>
+                      <UserNavigation
+                        open={open}
+                        userNavigation={userNavigation}
+                      />
+                    </Profile>
+                  </RightContent>
+                )}
               </Content>
             </Border>
 
@@ -69,7 +72,6 @@ const Nav: FC<Props> = () => {
                 <MobileUserInfo>
                   <MobileUserPic />
                   <MobileUserNameEmail />
-                  <MobileBell />
                 </MobileUserInfo>
                 <MobileUserNavigation userNavigation={userNavigation} />
               </MobileProfile>

@@ -1,5 +1,6 @@
-import { CalendarIcon } from "@heroicons/react/outline";
 import React, { FC, useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { CalendarIcon } from "@heroicons/react/outline";
 import { db } from "../../../firebase.config";
 import Border from "../../Components/Border";
 import { Versions, Version } from "../../interfaces";
@@ -13,8 +14,8 @@ const VersionsList: FC<Props> = () => {
     let isSubscribe = true;
     (async () => {
       try {
-        const versionsRef = await db.collection("versions").limit(5).get();
-        const versions = versionsRef.docs.map((ver) => ver.data() as Version);
+        const querySnapshot = await getDocs(collection(db, "versions"));
+        const versions = querySnapshot.docs.map((ver) => ver.data() as Version);
         if (isSubscribe) {
           setVersions(versions);
         }

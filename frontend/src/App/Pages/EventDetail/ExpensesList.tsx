@@ -1,8 +1,9 @@
 import { Disclosure } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 
 import classNames from "../../../utils/classNames";
+import UserContext from "../../Contexts/UserContext";
 import { DetailExpenses, Event, Expenses, UserInfos } from "../../interfaces";
 import EditExpense from "./EditExpense";
 
@@ -13,9 +14,12 @@ interface Props {
 }
 
 const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
+  const user = useContext(UserContext);
   const [detailExpenses, setDetailExpenses] = useState<DetailExpenses>([]);
+
+  // set detail expense (expense with user info)
   useEffect(() => {
-    if (members && expenses) {
+    if (members.length > 0 && expenses.length > 0) {
       const sortedExpense = expenses.sort(
         (a, b) => b.spentAt.toMillis() - a.spentAt.toMillis()
       );
@@ -128,12 +132,15 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
                                       .toLocaleTimeString()}
                                   </div>
                                 </td>
-                                <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
-                                  <EditExpense
-                                    currentEvent={currentEvent}
-                                    expense={expense}
-                                  />
-                                </td>
+                                {(currentEvent.creator.uid === user?.uid ||
+                                  expense.user.uid === user?.uid) && (
+                                  <td className="px-3 py-4 w-5 whitespace-nowrap text-right text-sm font-medium">
+                                    <EditExpense
+                                      currentEvent={currentEvent}
+                                      expense={expense}
+                                    />
+                                  </td>
+                                )}
                               </tr>
                             ))}
                           </tbody>
@@ -149,7 +156,7 @@ const ExpensesList: FC<Props> = ({ currentEvent, members, expenses }) => {
                       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                         <div className="p-6 text-center">
                           <span className="text-gray-500 text-lg">
-                            Empty expense list
+                            No expense created
                           </span>
                         </div>
                       </div>

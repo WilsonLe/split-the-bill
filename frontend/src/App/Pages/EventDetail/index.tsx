@@ -1,4 +1,5 @@
 import React, { FC, useContext, useEffect, useState } from "react";
+import { deleteDoc, doc, onSnapshot, collection } from "firebase/firestore";
 import { Redirect, useLocation } from "react-router-dom";
 import { db } from "../../../firebase.config";
 
@@ -10,8 +11,10 @@ import EventCode from "../../Components/Popup/EventCode";
 import UserContext from "../../Contexts/UserContext";
 import {
   dummyEvent,
-  dummyUserInfos,
+  dummyUserInfo,
   Event,
+  EventWithoutMemberExpense,
+  Expenses,
   UserInfo,
   UserInfos,
 } from "../../interfaces";
@@ -20,6 +23,7 @@ import ExpensesList from "./ExpensesList";
 import JoinEvent from "./JoinEvent";
 import MembersList from "./MembersList";
 import SplitTheBill from "./SplitTheBill";
+import ConfirmKick from "../../Components/Popup/ConfirmKick";
 
 interface Props {}
 
@@ -27,65 +31,93 @@ const EventDetail: FC<Props> = () => {
   const user = useContext(UserContext);
   const [auth, setAuth] = useState(true);
   const [currentEvent, setCurrentEvent] = useState<Event>(dummyEvent);
-  const [members, setMembers] = useState<UserInfos>(dummyUserInfos);
+  const [currentEventWithoutExpense, setCurrentEventWithoutExpense] =
+    useState<EventWithoutMemberExpense>();
+  const [expensesData, setExpensesData] = useState<Expenses>();
+  const [membersData, setMembersData] = useState<UserInfos>();
   const [isValidCode, setIsValidCode] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
   const [isMember, setIsMember] = useState(true);
   const [justLeft, setJustLeft] = useState(false);
+  const [justJoin, setJustJoin] = useState(false);
   const [showEventLink, setShowEventLink] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
+  const [showConfirmKick, setShowConfirmKick] = useState(false);
+  const [toBeRemovedMember, setToBeRemovedMember] =
+    useState<UserInfo>(dummyUserInfo);
   const [eventDeleted, setEventDeleted] = useState(false);
   const [eventLeft, setEventLeft] = useState(false);
   const query = new URLSearchParams(useLocation().search);
   const eventCode = query.get("code");
 
-  // fetch event data from eventCode
+  // fetch event without expense, members data from eventCode
   useEffect(() => {
     if (eventCode) {
-      const unsubscribe = db
-        .collection("events")
-        .doc(eventCode)
-        .onSnapshot(
-          (doc) => {
-            setCurrentEvent(doc.data() as Event);
-          },
-          (error) => {
-            console.log(error);
+      const unsubscribe = onSnapshot(
+        doc(db, "events", eventCode),
+        (doc) => {
+          if (doc.exists()) {
+            const event = doc.data() as EventWithoutMemberExpense;
+            setCurrentEventWithoutExpense(event as EventWithoutMemberExpense);
           }
-        );
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
       return () => unsubscribe();
     } else setIsValidCode(false);
   }, [eventCode]);
 
-  // fetch members data from event data
+  // fetch event expense data from eventCode
   useEffect(() => {
-    let isSubscribe = true;
-    if (currentEvent) {
-      (async () => {
-        const tempMembers: UserInfos = [];
-        for (let i = 0; i < currentEvent.members.length; i++) {
-          try {
-            const user = await db
-              .collection("users")
-              .doc(currentEvent.members[i])
-              .get();
-            if (user.exists) {
-              tempMembers.push(user.data() as UserInfo);
-            } else {
-              console.log(`unknown user with uid ${user.id}`);
-            }
-          } catch (error) {
-            console.log(error);
-          }
+    if (eventCode) {
+      const unsubscribe = onSnapshot(
+        collection(db, "events", eventCode, "expenses"),
+        (querySnapshot) => {
+          const expenses = querySnapshot.docs.map((expense) => expense.data());
+          setExpensesData(expenses as Expenses);
+        },
+        () => {
+          setExpensesData([] as Expenses);
         }
-        isSubscribe && setMembers(tempMembers);
-      })();
+      );
+      return () => unsubscribe();
+    } else setIsValidCode(false);
+  }, [eventCode, justJoin]);
+
+  // fetch event member data from eventCode
+  useEffect(() => {
+    if (eventCode) {
+      const unsubscribe = onSnapshot(
+        collection(db, "events", eventCode, "members"),
+        (querySnapshot) => {
+          const members = querySnapshot.docs.map(
+            (member) => member.data() as UserInfo
+          );
+          setMembersData(members as UserInfos);
+        },
+        () => {
+          setMembersData([] as UserInfos);
+        }
+      );
+      return () => unsubscribe();
+    } else setIsValidCode(false);
+  }, [eventCode, justJoin]);
+
+  // merge expense data, member data to currentEvent
+  useEffect(() => {
+    if (expensesData && membersData && currentEventWithoutExpense) {
+      const currentEvent = {
+        ...currentEventWithoutExpense,
+        expenses: expensesData,
+        members: membersData,
+        membersUid: membersData.map((member) => member.uid),
+      } as Event;
+      setCurrentEvent(currentEvent);
     }
-    return () => {
-      isSubscribe = false;
-    };
-  }, [currentEvent]);
+  }, [expensesData, membersData, currentEventWithoutExpense]);
 
   // check if user is creator
   useEffect(() => {
@@ -98,7 +130,7 @@ const EventDetail: FC<Props> = () => {
   // check if user is member
   useEffect(() => {
     if (user && currentEvent) {
-      if (currentEvent.members.includes(user.uid)) setIsMember(true);
+      if (currentEvent.membersUid.includes(user.uid)) setIsMember(true);
       else setIsMember(false);
     }
   }, [user, currentEvent]);
@@ -113,9 +145,12 @@ const EventDetail: FC<Props> = () => {
   }, [user]);
 
   const deleteEventHandler = async (currentEvent: Event) => {
-    if (currentEvent) {
+    if (user && currentEvent) {
       try {
-        await db.collection("events").doc(currentEvent.code).delete();
+        await deleteDoc(doc(db, "events", currentEvent.code));
+        await deleteDoc(
+          doc(db, "users", user.uid, "events", currentEvent.code)
+        );
         setEventDeleted(true);
       } catch (error) {
         console.log(error);
@@ -125,21 +160,32 @@ const EventDetail: FC<Props> = () => {
 
   const leaveEventHandler = async (currentEvent: Event) => {
     if (user && currentEvent) {
-      const updatedMembers = currentEvent.members.filter(
-        (uid) => uid !== user.uid
-      );
       setJustLeft(true);
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update({
-            ...currentEvent,
-            members: updatedMembers,
-          } as Event);
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "members", user.uid)
+        );
+        await deleteDoc(
+          doc(db, "users", user.uid, "events", currentEvent.code)
+        );
         setEventLeft(true);
       } catch (error) {
-        setJustLeft(false);
+        setJustLeft(true);
+        console.log(error);
+      }
+    }
+  };
+
+  const kickMemberHandler = async (member: UserInfo) => {
+    if (user?.uid && currentEvent?.creator.uid) {
+      try {
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "members", member.uid)
+        );
+        await deleteDoc(
+          doc(db, "users", member.uid, "events", currentEvent.code)
+        );
+      } catch (error) {
         console.log(error);
       }
     }
@@ -150,7 +196,7 @@ const EventDetail: FC<Props> = () => {
       {!auth && <Redirect to={`/login?code=${eventCode}`} />}
       {!isValidCode && <Redirect to="/notfound" />}
       {!isMember && !justLeft && currentEvent && (
-        <JoinEvent currentEvent={currentEvent} />
+        <JoinEvent currentEvent={currentEvent} setJustJoin={setJustJoin} />
       )}
       {eventDeleted && <Redirect to="/" />}
       {eventLeft && <Redirect to="/" />}
@@ -189,23 +235,39 @@ const EventDetail: FC<Props> = () => {
                 </ButtonRed>
                 <ConfirmLeave
                   showConfirmLeave={showConfirmLeave}
-                  setShowConfirmLeave={setShowConfirmDelete}
+                  setShowConfirmLeave={setShowConfirmLeave}
                   currentEvent={currentEvent}
                   leaveEventHandler={leaveEventHandler}
                 />
               </>
             )}
           </div>
-          <MembersList members={members} creator={currentEvent?.creator} />
+          <MembersList
+            members={currentEvent.members}
+            creator={currentEvent.creator}
+            currentEvent={currentEvent}
+            setToBeRemovedMember={setToBeRemovedMember}
+            setShowConfirmKick={setShowConfirmKick}
+          />
+          <ConfirmKick
+            showConfirmKick={showConfirmKick}
+            setShowConfirmKick={setShowConfirmKick}
+            currentEvent={currentEvent}
+            toBeRemovedMember={toBeRemovedMember}
+            kickMemberHandler={kickMemberHandler}
+          />
           <ExpensesList
             currentEvent={currentEvent}
-            members={members}
-            expenses={currentEvent?.expenses}
+            members={currentEvent.members}
+            expenses={currentEvent.expenses}
           />
 
           <div className="relative mt-2 mb-10 h-16">
             <div className="absolute left-1/2 top-0 transform -translate-x-1/2 translate-y-1/2">
-              <SplitTheBill currentEvent={currentEvent} members={members} />
+              <SplitTheBill
+                currentEvent={currentEvent}
+                members={currentEvent.members}
+              />
             </div>
             <div className="absolute right-0 top-0transform translate-y-1/4">
               <AddExpense

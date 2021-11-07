@@ -1,8 +1,8 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useState } from "react";
 import { ButtonPrimary, ButtonRed } from "../../../Components/Button";
 import { db } from "../../../../firebase.config";
-import UserContext from "../../../Contexts/UserContext";
-import { DetailExpense, Event, Expense } from "../../../interfaces";
+import { DetailExpense, Event } from "../../../interfaces";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 interface Props {
   currentEvent: Event;
@@ -11,31 +11,41 @@ interface Props {
 }
 
 const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
-  const user = useContext(UserContext);
   const [note, setNote] = useState(expense?.description);
   const [amount, setAmount] = useState<number | string>(expense?.amount);
+  const [noteError, setNoteError] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
 
+  const editAmountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmountError("");
+    setAmount(e.target.value);
+  };
+
+  const editNoteHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoteError("");
+    setNote(e.target.value);
+  };
   const editExpenseHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const amountNumber = Number(amount);
+    if (amountNumber <= 0) {
+      setAmountError("Amount must be positive");
+      return;
+    }
+    if (note === "") {
+      setNoteError("Item note not specified");
+      return;
+    }
     if (currentEvent) {
       if (note !== expense.description || amount !== expense.amount) {
-        const updatedExpenseList = currentEvent.expenses.filter(
-          (e) => e.id !== expense.id
-        );
-        updatedExpenseList.push({
-          ...expense,
-          user: user?.uid,
-          description: note,
-          amount,
-        } as Expense);
         try {
-          await db
-            .collection("events")
-            .doc(currentEvent.code)
-            .update({
-              ...currentEvent,
-              expenses: updatedExpenseList,
-            } as Event);
+          await updateDoc(
+            doc(db, "events", currentEvent.code, "expenses", expense.id),
+            {
+              description: note,
+              amount: amountNumber,
+            }
+          );
         } catch (error) {
           console.log(error);
         }
@@ -46,17 +56,10 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
 
   const deleteExpenseHandler = async () => {
     if (currentEvent) {
-      const updatedExpenseList = currentEvent.expenses.filter(
-        (e) => e.id !== expense.id
-      );
       try {
-        await db
-          .collection("events")
-          .doc(currentEvent.code)
-          .update({
-            ...currentEvent,
-            expenses: updatedExpenseList,
-          } as Event);
+        await deleteDoc(
+          doc(db, "events", currentEvent.code, "expenses", expense.id)
+        );
       } catch (error) {
         console.log(error);
       }
@@ -66,7 +69,7 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
 
   return (
     <>
-      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 w-80">
+      <div className="px-4 py-5 sm:p-6 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 w-80">
         <div className="flex justify-between items-center">
           <h3 className="text-lg leading-6 font-medium text-gray-900 inline-block">
             Edit expense
@@ -88,7 +91,7 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
                 type="text"
                 name="expense note"
                 value={note}
-                onChange={(e) => setNote(e.target.value)}
+                onChange={editNoteHandler}
                 autoComplete="off"
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
                 placeholder="Note"
@@ -102,13 +105,23 @@ const EditExpensePrompt: FC<Props> = ({ currentEvent, expense, buttonRef }) => {
                 type="number"
                 name="expense amount"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={editAmountHandler}
                 autoComplete="off"
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full h-full p-2 sm:text-sm border-gray-300 rounded-md"
                 placeholder="Amount"
               />
             </div>
           </div>
+          {noteError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {noteError}
+            </span>
+          )}
+          {amountError !== "" && (
+            <span className="pb-3 w-full text-sm text-red-500 text-left">
+              {amountError}
+            </span>
+          )}
           <div>
             <ButtonPrimary type="submit" className="w-full justify-center">
               Save changes
