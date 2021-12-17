@@ -50,6 +50,9 @@ const Nav: FC<Props> = () => {
                 <LeftContent>
                   <MobileMenuButton open={open} />
                   <Logo />
+                  <h1 className=" flex flex-col justify-center items-center m-2 text-white font-bold text-2xl tracking-wide">
+                    Split The Bill
+                  </h1>
                   <Navigation navigation={navigation} />
                 </LeftContent>
                 {user && (

@@ -4,7 +4,7 @@ import { db } from "./firebase.config";
 exports.removeOldEvent = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("America/New_York")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const daysBack = 90;
     const now = new Date();
     const cutoffDate = new Date().setDate(now.getDate() - daysBack);
